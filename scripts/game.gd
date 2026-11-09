@@ -128,6 +128,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 	defeated_wave_enemies = 0
 	wave_enemies_remaining = total_wave_enemies
 	
+	player.update_wave_progress(0, total_wave_enemies)
 	typing_panel.update_wave_progress(0, total_wave_enemies, current_wave)
 	typing_metrics.start_wave(current_wave)
 	
@@ -171,6 +172,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 	typing_panel.add_log("=== %s ===" % banner_text)
 	
 	match current_wave:
+		1:
 			typing_panel.set_computer_message("Para disparos mais fortes você precisa manter seu ritmo constante.")
 		2:
 			typing_panel.set_computer_message("Alerta! Próxima horda está a caminho.", true)
@@ -400,7 +402,6 @@ func _on_flow_intensity_changed(flow_state: String, mult: float, desc: String) -
 	if flow_state == "FRENESI":
 		typing_panel.set_computer_message("Ritmo frenético! Invasores aproximam-se com frequência ampliada.", true)
 	elif flow_state == "RECUPERAÇÃO":
-	elif flow_state == "RECUPERAÇÃO":
 		typing_panel.set_computer_message("Modo recuperação ativado: cadência reduzida para reorganização.")
 	elif flow_state == "ACELERADO":
 		typing_panel.set_computer_message("Excelente sequência! O fluxo de combate está acelerando.")
@@ -463,14 +464,17 @@ func _get_active_enemy_count() -> int:
 
 func _maintain_enemy_density() -> void:
 	if is_game_over or is_wave_transition:
+		return
 	var stagger_step: float = 0.0
 	while _get_active_enemy_count() < MIN_ON_SCREEN_ENEMIES and not wave_queue.is_empty():
 		_spawn_enemy(stagger_step)
 		stagger_step += 25.0
 
+func _on_enemy_word_completed(enemy: EnemyWord) -> void:
 	var pts: int = ScoreManager.register_word_destroyed(enemy.full_word.length(), 1.0 + (current_wave * 0.1))
 	wave_enemies_remaining = maxi(0, wave_enemies_remaining - 1)
 	defeated_wave_enemies += 1
+	player.update_wave_progress(defeated_wave_enemies, total_wave_enemies)
 	typing_panel.update_wave_progress(defeated_wave_enemies, total_wave_enemies, current_wave)
 	
 	if explosion_scene:
@@ -504,6 +508,7 @@ func _maintain_enemy_density() -> void:
 func _on_enemy_reached_bottom(enemy: EnemyWord) -> void:
 	wave_enemies_remaining = maxi(0, wave_enemies_remaining - 1)
 	defeated_wave_enemies += 1
+	player.update_wave_progress(defeated_wave_enemies, total_wave_enemies)
 	typing_panel.update_wave_progress(defeated_wave_enemies, total_wave_enemies, current_wave)
 	
 	if explosion_scene:

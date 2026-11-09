@@ -109,3 +109,10 @@ func add_log(msg: String) -> void:
 		
 	if log_label:
 		log_label.text = "\n".join(recent_logs)
+
+func update_wave_progress(_current_count: int, _total_count: int, _wave_num: int = 1) -> void:
+	pass
+
+func set_computer_message(msg: String, is_alert: bool = false) -> void:
+	var prefix: String = "⚠️ " if is_alert else "📡 "
+	add_log(prefix + msg)
