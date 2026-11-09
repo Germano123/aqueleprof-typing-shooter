@@ -1,0 +1,539 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/typing_panel.gd" id="1_panel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.04, 0.06, 0.11, 0.95)
+border_width_left = 2
+border_color = Color(0.15, 0.6, 0.95, 0.6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.06, 0.09, 0.16, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.4, 0.7, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_key_left"]
+bg_color = Color(0.08, 0.35, 0.6, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.7, 1, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_key_right"]
+bg_color = Color(0.45, 0.15, 0.65, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.4, 1, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_key_home"]
+bg_color = Color(0.1, 0.45, 0.75, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.9, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_key_home_r"]
+bg_color = Color(0.55, 0.2, 0.75, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.5, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_left"]
+bg_color = Color(0.15, 0.6, 0.95, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="TypingPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(460, 720)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -460.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 17
+text = "PAINEL DE CONTROLE DE DIGITAÇÃO"
+horizontal_alignment = 1
+
+[node name="MetricsGrid" type="GridContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="CPMCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/MetricsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MetricsGrid/CPMCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/CPMCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "CPM (CARACTERES/MIN)"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/CPMCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "0"
+horizontal_alignment = 1
+
+[node name="WPMCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/MetricsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MetricsGrid/WPMCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/WPMCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "PPM / WPM"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/WPMCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "0"
+horizontal_alignment = 1
+
+[node name="AccuracyCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/MetricsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MetricsGrid/AccuracyCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/AccuracyCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "PRECISÃO"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/AccuracyCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 20
+text = "100%"
+horizontal_alignment = 1
+
+[node name="RhythmCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/MetricsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MetricsGrid/RhythmCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/RhythmCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "ESTABILIDADE RITMO"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="MarginContainer/VBoxContainer/MetricsGrid/RhythmCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.4, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "100%"
+horizontal_alignment = 1
+
+[node name="HandBalanceCard" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HandBalanceCard"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HandBalanceCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "EQUILÍBRIO DE MÃOS (ESQUERDA / DIREITA)"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HandBalanceCard/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="LeftLabel" type="Label" parent="MarginContainer/VBoxContainer/HandBalanceCard/VBox/HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "E: 50%"
+
+[node name="LeftBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HandBalanceCard/VBox/HBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_left")
+value = 50.0
+show_percentage = false
+
+[node name="RightLabel" type="Label" parent="MarginContainer/VBoxContainer/HandBalanceCard/VBox/HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.45, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "D: 50%"
+horizontal_alignment = 2
+
+[node name="TargetCard" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TargetCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TargetWordLabel" type="Label" parent="MarginContainer/VBoxContainer/TargetCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "SEM ALVO TRAVADO"
+horizontal_alignment = 1
+
+[node name="TargetHandLabel" type="Label" parent="MarginContainer/VBoxContainer/TargetCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "DIGITE A PRIMEIRA LETRA"
+horizontal_alignment = 1
+
+[node name="KeyboardCard" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="KeyboardContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/KeyboardCard"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "MAPA TÁTIL DE TECLAS"
+horizontal_alignment = 1
+
+[node name="Row1" type="HBoxContainer" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer"]
+layout_mode = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="Key_Q" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "Q"
+
+[node name="Key_W" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "W"
+
+[node name="Key_E" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "E"
+
+[node name="Key_R" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "R"
+
+[node name="Key_T" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "T"
+
+[node name="Key_Y" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "Y"
+
+[node name="Key_U" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "U"
+
+[node name="Key_I" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "I"
+
+[node name="Key_O" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "O"
+
+[node name="Key_P" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row1"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "P"
+
+[node name="Row2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer"]
+layout_mode = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="Key_A" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home")
+text = "A"
+
+[node name="Key_S" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home")
+text = "S"
+
+[node name="Key_D" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home")
+text = "D"
+
+[node name="Key_F" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home")
+text = "F"
+
+[node name="Key_G" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "G"
+
+[node name="Key_H" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "H"
+
+[node name="Key_J" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home_r")
+text = "J"
+
+[node name="Key_K" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home_r")
+text = "K"
+
+[node name="Key_L" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home_r")
+text = "L"
+
+[node name="Key_Ç" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row2"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_home_r")
+text = "Ç"
+
+[node name="Row3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Key_Z" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "Z"
+
+[node name="Key_X" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "X"
+
+[node name="Key_C" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "C"
+
+[node name="Key_V" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "V"
+
+[node name="Key_B" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_left")
+text = "B"
+
+[node name="Key_N" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "N"
+
+[node name="Key_M" type="Button" parent="MarginContainer/VBoxContainer/KeyboardCard/KeyboardContainer/Row3"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+pivot_offset = Vector2(18, 16)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_key_right")
+text = "M"
+
+[node name="LogCard" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/LogCard"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/LogCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "TELEMETRIA DE PERFORMANCE"
+
+[node name="LogLabel" type="Label" parent="MarginContainer/VBoxContainer/LogCard/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.3, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "SISTEMA PRONTO"
+autowrap_mode = 2

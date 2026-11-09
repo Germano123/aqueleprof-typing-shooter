@@ -1,0 +1,446 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://assets/textures/shield.svg" id="2_shield"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top"]
+bg_color = Color(0.02, 0.04, 0.09, 1)
+border_width_bottom = 2
+border_color = Color(0.15, 0.65, 0.95, 0.9)
+shadow_color = Color(0, 0, 0, 0.9)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kpi_modal"]
+bg_color = Color(0.04, 0.06, 0.12, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.8, 1, 0.95)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.85)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kpi_card"]
+bg_color = Color(0.06, 0.1, 0.18, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.5, 0.8, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gameover"]
+bg_color = Color(0.04, 0.06, 0.12, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.2, 0.3, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.08, 0.45, 0.75, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.8, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.12, 0.6, 0.95, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6, 0.95, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="HUD" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_hud")
+
+[node name="TopBar" type="PanelContainer" parent="."]
+z_index = 10
+custom_minimum_size = Vector2(820, 58)
+offset_right = 820.0
+offset_bottom = 58.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_top")
+
+[node name="MarginContainer" type="MarginContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/MarginContainer"]
+layout_mode = 2
+
+[node name="ScoreContainer" type="VBoxContainer" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScoreLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "PONTOS: 0"
+
+[node name="HighScoreLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "RECORDE: 0"
+
+[node name="CenterContainer" type="VBoxContainer" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="WaveLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "FASE 1"
+horizontal_alignment = 1
+
+[node name="ComboLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/CenterContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 13
+text = "COMBO 0x (x1.0)"
+horizontal_alignment = 1
+
+[node name="StatsContainer" type="VBoxContainer" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="ShieldsContainer" type="HBoxContainer" parent="TopBar/MarginContainer/HBoxContainer/StatsContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Shield1" type="TextureRect" parent="TopBar/MarginContainer/HBoxContainer/StatsContainer/ShieldsContainer"]
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+texture = ExtResource("2_shield")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Shield2" type="TextureRect" parent="TopBar/MarginContainer/HBoxContainer/StatsContainer/ShieldsContainer"]
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+texture = ExtResource("2_shield")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Shield3" type="TextureRect" parent="TopBar/MarginContainer/HBoxContainer/StatsContainer/ShieldsContainer"]
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+texture = ExtResource("2_shield")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatsLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/StatsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.85, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "0 WPM | 100%"
+horizontal_alignment = 2
+
+[node name="WaveBanner" type="Label" parent="."]
+offset_left = 110.0
+offset_top = 280.0
+offset_right = 710.0
+offset_bottom = 340.0
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 30
+text = "FASE 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WaveKPIModal" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -240.0
+offset_right = 60.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpi_modal")
+
+[node name="MarginContainer" type="MarginContainer" parent="WaveKPIModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WaveKPIModal/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "★ RELATÓRIO DE DESEMPENHO - FASE 1 ★"
+horizontal_alignment = 1
+
+[node name="RankContainer" type="HBoxContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="RankBadge" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/RankContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+text = "RANK S"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="AccCard" type="PanelContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpi_card")
+
+[node name="Margin" type="MarginContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/AccCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/AccCard/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/AccCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "PRECISÃO DE TECLAS"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/AccCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 14
+text = "98.5%
+(200 acertos | 3 erros)"
+horizontal_alignment = 1
+
+[node name="StreakCard" type="PanelContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpi_card")
+
+[node name="Margin" type="MarginContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/StreakCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/StreakCard/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/StreakCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "MAIOR SEQUÊNCIA"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/StreakCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "45 teclas
+(Sem Erros)"
+horizontal_alignment = 1
+
+[node name="IntervalCard" type="PanelContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpi_card")
+
+[node name="Margin" type="MarginContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/IntervalCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/IntervalCard/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/IntervalCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "TEMPO ENTRE TECLAS"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/IntervalCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.4, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "130 ms
+(Cadência Estável)"
+horizontal_alignment = 1
+
+[node name="SpeedCard" type="PanelContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpi_card")
+
+[node name="Margin" type="MarginContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/SpeedCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/SpeedCard/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/SpeedCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "VELOCIDADE MÉDIA"
+horizontal_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/SpeedCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "180 CPM | 36 PPM"
+horizontal_alignment = 1
+
+[node name="NextWaveButton" type="Button" parent="WaveKPIModal/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(320, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "AVANÇAR PARA A PRÓXIMA FASE [ESPAÇO]"
+
+[node name="GameOverOverlay" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -190.0
+offset_right = 240.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gameover")
+
+[node name="MarginContainer" type="MarginContainer" parent="GameOverOverlay"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverOverlay/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="GameOverOverlay/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.25, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 28
+text = "FIM DE JOGO"
+horizontal_alignment = 1
+
+[node name="HighScoreAlert" type="Label" parent="GameOverOverlay/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "★ NOVO RECORDE! ★"
+horizontal_alignment = 1
+
+[node name="FinalScoreLabel" type="Label" parent="GameOverOverlay/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "PONTOS: 0"
+horizontal_alignment = 1
+
+[node name="FinalStatsLabel" type="Label" parent="GameOverOverlay/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Palavras Destruídas: 0
+Maior Combo: 0x
+Velocidade: 0 WPM
+Precisão: 100%"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameOverOverlay/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameOverOverlay/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "JOGAR DE NOVO"
+
+[node name="MenuButton" type="Button" parent="GameOverOverlay/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "MENU"

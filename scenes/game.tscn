@@ -1,0 +1,87 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="Texture2D" path="res://assets/textures/particle.svg" id="4_part"]
+[ext_resource type="PackedScene" path="res://scenes/typing_panel.tscn" id="5_panel"]
+
+[sub_resource type="Gradient" id="Gradient_stars"]
+offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+colors = PackedColorArray(0.1, 0.2, 0.4, 0, 0.8, 0.9, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.2, 0.4, 0.8, 0)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 820.0
+offset_bottom = 720.0
+color = Color(0.03, 0.04, 0.08, 1)
+
+[node name="StarfieldSlow" type="CPUParticles2D" parent="."]
+position = Vector2(410, -10)
+amount = 60
+lifetime = 6.0
+preprocess = 6.0
+texture = ExtResource("4_part")
+emission_shape = 3
+emission_rect_extents = Vector2(410, 1)
+direction = Vector2(0, 1)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+scale_amount_min = 0.1
+scale_amount_max = 0.25
+color_ramp = SubResource("Gradient_stars")
+
+[node name="StarfieldFast" type="CPUParticles2D" parent="."]
+position = Vector2(410, -10)
+amount = 30
+lifetime = 3.0
+preprocess = 3.0
+texture = ExtResource("4_part")
+emission_shape = 3
+emission_rect_extents = Vector2(410, 1)
+direction = Vector2(0, 1)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 180.0
+initial_velocity_max = 300.0
+scale_amount_min = 0.25
+scale_amount_max = 0.5
+color_ramp = SubResource("Gradient_stars")
+
+[node name="DangerLine" type="Line2D" parent="."]
+points = PackedVector2Array(0, 630, 820, 630)
+width = 2.0
+default_color = Color(0.9, 0.2, 0.3, 0.35)
+
+[node name="ArenaDivider" type="Line2D" parent="."]
+points = PackedVector2Array(820, 0, 820, 720)
+width = 3.0
+default_color = Color(0.2, 0.7, 1, 0.7)
+
+[node name="WordContainer" type="Node2D" parent="."]
+
+[node name="ProjectileContainer" type="Node2D" parent="."]
+
+[node name="EffectContainer" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(410, 650)
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 2.8
+
+[node name="WaveTimer" type="Timer" parent="."]
+wait_time = 24.0
+
+[node name="TypingPanel" parent="." instance=ExtResource("5_panel")]
+offset_left = 820.0
+offset_right = 1280.0
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]

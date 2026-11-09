@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+*.translation
+
+# User and editor saves
+user/
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,172 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_play"]
+[ext_resource type="Texture2D" path="res://assets/textures/player_ship.svg" id="2_ship"]
+[ext_resource type="Texture2D" path="res://assets/textures/particle.svg" id="3_part"]
+
+[sub_resource type="Gradient" id="Gradient_thrust"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.2, 0.9, 1, 1, 0, 0.4, 1, 0.8, 0, 0.1, 0.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_overdrive"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(1, 0.9, 0.2, 1, 1, 0.2, 0.6, 0.8, 0.1, 0.8, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.06, 0.08, 0.14, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.5, 0.8, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_fill"]
+bg_color = Color(0.2, 0.8, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wave_bg"]
+bg_color = Color(0.04, 0.06, 0.1, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.15, 0.4, 0.6, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wave_fill"]
+bg_color = Color(0.25, 0.95, 0.45, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="Player" type="Node2D"]
+z_index = 8
+script = ExtResource("1_play")
+
+[node name="OverdriveParticles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 28
+lifetime = 0.35
+texture = ExtResource("3_part")
+emission_shape = 1
+emission_sphere_radius = 24.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 40.0
+initial_velocity_max = 90.0
+scale_amount_min = 0.3
+scale_amount_max = 0.8
+color_ramp = SubResource("Gradient_overdrive")
+
+[node name="Thrusters" type="CPUParticles2D" parent="."]
+position = Vector2(0, 38)
+amount = 24
+lifetime = 0.25
+texture = ExtResource("3_part")
+direction = Vector2(0, 1)
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 90.0
+initial_velocity_max = 160.0
+scale_amount_min = 0.3
+scale_amount_max = 0.7
+color_ramp = SubResource("Gradient_thrust")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("2_ship")
+
+[node name="LeftCannon" type="Marker2D" parent="."]
+position = Vector2(-38, -14)
+
+[node name="RightCannon" type="Marker2D" parent="."]
+position = Vector2(38, -14)
+
+[node name="StyleHUD" type="Node2D" parent="."]
+position = Vector2(0, 50)
+
+[node name="RankLabel" type="Label" parent="StyleHUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -18.0
+offset_right = 30.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.4, 0.6, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "C"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StyleBar" type="ProgressBar" parent="StyleHUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -44.0
+offset_top = 0.0
+offset_right = 44.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_fill")
+value = 50.0
+show_percentage = false
+
+[node name="WaveProgressBar" type="ProgressBar" parent="StyleHUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -44.0
+offset_top = 9.0
+offset_right = 44.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_wave_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_wave_fill")
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
+[node name="WaveProgressLabel" type="Label" parent="StyleHUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = 15.0
+offset_right = 45.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.85, 0.6, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 8
+text = "0%"
+horizontal_alignment = 1
+vertical_alignment = 1

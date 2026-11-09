@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 64" width="32" height="64">
+  <defs>
+    <linearGradient id="laserGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="30%" stop-color="#38bdf8" />
+      <stop offset="70%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0" />
+    </linearGradient>
+    <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <!-- Outer Glow Beam -->
+  <rect x="11" y="2" width="10" height="60" rx="5" fill="#38bdf8" opacity="0.6" filter="url(#laserGlow)" />
+  <!-- Core Hot Beam -->
+  <rect x="13" y="4" width="6" height="56" rx="3" fill="url(#laserGrad)" />
+  <circle cx="16" cy="8" r="4" fill="#ffffff" filter="url(#laserGlow)" />
+</svg>

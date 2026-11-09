@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/explosion.gd" id="1_exp"]
+[ext_resource type="Texture2D" path="res://assets/textures/particle.svg" id="2_part"]
+
+[sub_resource type="Gradient" id="Gradient_p"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(1, 0.9, 0.5, 1, 1, 0.3, 0.1, 0.9, 0.2, 0.7, 1, 0)
+
+[node name="Explosion" type="Node2D"]
+z_index = 10
+script = ExtResource("1_exp")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 36
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource("2_part")
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 120.0
+initial_velocity_max = 300.0
+damping_min = 120.0
+damping_max = 180.0
+scale_amount_min = 0.4
+scale_amount_max = 1.2
+color_ramp = SubResource("Gradient_p")

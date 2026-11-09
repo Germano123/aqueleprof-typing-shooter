@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="podGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="50%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#881337" />
+    </linearGradient>
+    <filter id="podGlow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <!-- Drone Frame -->
+  <polygon points="32,4 58,24 50,56 32,44 14,56 6,24" fill="#1e1b4b" stroke="#f43f5e" stroke-width="2" />
+  <!-- Core Eye / Sensor -->
+  <circle cx="32" cy="28" r="12" fill="url(#podGrad)" filter="url(#podGlow)" />
+  <circle cx="32" cy="28" r="5" fill="#ffffff" />
+  <!-- Lower Thruster Flare -->
+  <polygon points="30,44 32,58 34,44" fill="#f43f5e" filter="url(#podGlow)" />
+  <polygon points="12,50 8,58 16,52" fill="#fb7185" />
+  <polygon points="52,50 56,58 48,52" fill="#fb7185" />
+</svg>
