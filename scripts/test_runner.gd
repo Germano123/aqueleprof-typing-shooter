@@ -50,73 +50,71 @@ func test_wave_colors_and_content() -> void:
 	assert(q1[0]["color"] == Color(0.25, 0.85, 1.0), "Fase 1 deve ser Ciano Elétrico")
 	
 	var q2: Array[Dictionary] = WordManager.generate_wave_queue(2)
-	assert(q2[0]["color"] == Color(0.25, 1.0, 0.45), "Fase 2 deve ser Verde Esmeralda")
+	assert(q2[0]["color"] == Color(0.2, 0.95, 0.9), "Fase 2 deve ser Ciano Centro")
 	
-	var q3: Array[Dictionary] = WordManager.generate_wave_queue(3)
-	assert(q3[0]["color"] == Color(1.0, 0.75, 0.15), "Fase 3 deve ser Âmbar Solar")
-	
-	var q4: Array[Dictionary] = WordManager.generate_wave_queue(4)
-	assert(q4[0]["color"] == Color(1.0, 0.28, 0.38), "Fase 4 deve ser Carmesim")
-	assert(q4[0]["scale"] == 1.35, "Fase 4 deve ter escala ampliada 1.35x")
+	var q19: Array[Dictionary] = WordManager.generate_wave_queue(19)
+	assert(q19[0]["color"] == Color(1.0, 0.28, 0.38), "Fase 19 deve ser Carmesim Pesado")
+	assert(q19[0]["scale"] == 1.35, "Fase 19 deve ter escala ampliada 1.35x")
 	print("  ✓ Cores e escalas por fase validadas.")
 
 func test_wave_1_2_3_ordered_pairs_and_sequence() -> void:
-	print("[TEST] Estrutura Pedagógica das Fases 1, 2 e 3 (40 por par + 100 sequência final = 300 totais)...")
+	print("[TEST] Progressão de Fases com Adição Gradual de Letras (Fases 1 a 6)...")
 	
-	# FASE 1
+	# FASE 1: 40 inimigos com o par F e J
 	var q1: Array[Dictionary] = WordManager.generate_wave_queue(1)
-	assert(q1.size() == 300, "Fase 1 deve conter exatamente 300 inimigos (5 seções de 40 + 100 final)")
-	# Primeiro bloco: F e J (40 teclas)
-	for i in range(40):
-		var w = q1[i]["word"]
-		assert(w == "F" or w == "J", "Primeiras 40 teclas da Fase 1 devem ser o par F-J")
-	# Segundo bloco: G e H (40 teclas)
-	for i in range(40, 80):
-		var w = q1[i]["word"]
-		assert(w == "G" or w == "H", "Segundas 40 teclas da Fase 1 devem ser o par G-H")
-	# Terceiro bloco: D e K (40 teclas)
-	for i in range(80, 120):
-		var w = q1[i]["word"]
-		assert(w == "D" or w == "K", "Terceiras 40 teclas da Fase 1 devem ser o par D-K")
-	# Quarto bloco: S e L (40 teclas)
-	for i in range(120, 160):
-		var w = q1[i]["word"]
-		assert(w == "S" or w == "L", "Quartas 40 teclas da Fase 1 devem ser o par S-L")
-	# Quinto bloco: A e Ç (40 teclas)
-	for i in range(160, 200):
-		var w = q1[i]["word"]
-		assert(w == "A" or w == "Ç", "Quintas 40 teclas da Fase 1 devem ser o par A-Ç")
-	# Sequência final: 100 teclas mistas
-	assert(q1.slice(200, 300).size() == 100, "Últimos 100 inimigos devem ser a sequência completa da fase")
-	
-	# FASE 2
+	assert(q1.size() == 40, "Fase 1 deve ter exatamente 40 inimigos")
+	for item in q1:
+		var w = item["word"]
+		assert(w == "F" or w == "J", "Fase 1 deve conter apenas F e J")
+		
+	# FASE 2: 40 inimigos introduzindo G e H
 	var q2: Array[Dictionary] = WordManager.generate_wave_queue(2)
-	assert(q2.size() == 300, "Fase 2 deve conter exatamente 300 inimigos")
-	for i in range(40):
-		var w = q2[i]["word"]
-		assert(w == "R" or w == "U", "Primeiras 40 teclas da Fase 2 devem ser o par R-U")
-	assert(q2.slice(200, 300).size() == 100, "Fase 2 deve ter 100 teclas no bloco final")
+	assert(q2.size() == 40, "Fase 2 deve ter exatamente 40 inimigos")
+	var count_gh: int = 0
+	for item in q2:
+		var w = item["word"]
+		if w == "G" or w == "H":
+			count_gh += 1
+	assert(count_gh >= 24, "Fase 2 deve focar na introdução dos novos inimigos G e H")
 	
-	# FASE 3
+	# FASE 3: 40 inimigos introduzindo D e K
 	var q3: Array[Dictionary] = WordManager.generate_wave_queue(3)
-	assert(q3.size() == 300, "Fase 3 deve conter exatamente 300 inimigos")
-	for i in range(40):
-		var w = q3[i]["word"]
-		assert(w == "B" or w == "N", "Primeiras 40 teclas da Fase 3 devem ser o par B-N")
-	assert(q3.slice(200, 300).size() == 100, "Fase 3 deve ter 100 teclas no bloco final")
+	assert(q3.size() == 40, "Fase 3 deve ter exatamente 40 inimigos")
+	var count_dk: int = 0
+	for item in q3:
+		var w = item["word"]
+		if w == "D" or w == "K":
+			count_dk += 1
+	assert(count_dk >= 24, "Fase 3 deve focar na introdução dos dedos médios D e K")
 	
-	print("  ✓ Estrutura de 40 teclas por par e 100 na sequência final validada nas fases 1, 2 e 3.")
+	# FASE 4: 40 inimigos introduzindo S e L
+	var q4: Array[Dictionary] = WordManager.generate_wave_queue(4)
+	assert(q4.size() == 40, "Fase 4 deve ter exatamente 40 inimigos")
+	var count_sl: int = 0
+	for item in q4:
+		var w = item["word"]
+		if w == "S" or w == "L":
+			count_sl += 1
+	assert(count_sl >= 24, "Fase 4 deve focar na introdução dos dedos anelares S e L")
+	
+	# FASE 5: 40 inimigos introduzindo A e Ç
+	var q5: Array[Dictionary] = WordManager.generate_wave_queue(5)
+	assert(q5.size() == 40, "Fase 5 deve ter exatamente 40 inimigos")
+	var count_ac: int = 0
+	for item in q5:
+		var w = item["word"]
+		if w == "A" or w == "Ç":
+			count_ac += 1
+	assert(count_ac >= 24, "Fase 5 deve focar na introdução dos dedos mínimos A e Ç")
+	
+	# FASE 6: 60 inimigos (Home Row Master - todas as 10 teclas)
+	var q6: Array[Dictionary] = WordManager.generate_wave_queue(6)
+	assert(q6.size() == 60, "Fase 6 deve ter 60 inimigos de consolidação da Linha de Base")
+	
+	print("  ✓ Progressão fase a fase com adição gradual de inimigos validada com sucesso.")
 
 func test_section_transitions_and_flow_reset() -> void:
-	print("[TEST] Transições de Seções e Reset de Ritmo...")
-	var q1: Array[Dictionary] = WordManager.generate_wave_queue(1)
-	assert(q1.size() == 300, "Fase 1 deve ter 300 alvos")
-	assert(q1[0]["section_id"] == 1, "Primeiro alvo deve ser Seção 1")
-	assert(q1[39]["section_id"] == 1, "40º alvo deve ser Seção 1")
-	assert(q1[40]["section_id"] == 2, "41º alvo deve ser Seção 2")
-	assert(q1[199]["section_id"] == 5, "200º alvo deve ser Seção 5")
-	assert(q1[200]["section_id"] == 6, "201º alvo deve ser Seção 6")
-	
+	print("[TEST] Transições de Ritmo e Reset de Fluxo...")
 	var tm := TypingMetrics.new()
 	tm.start_session()
 	for i in range(25):
@@ -124,11 +122,11 @@ func test_section_transitions_and_flow_reset() -> void:
 	assert(tm.current_perfect_streak == 25, "Streak acelerada")
 	assert(tm.get_flow_state_name() == "ACELERADO", "Estado acelerado antes da troca")
 	
-	# Reset ao trocar de seção
+	# Reset ao trocar de fase
 	tm.reset_flow_rhythm()
 	assert(tm.current_perfect_streak == 0, "Streak resetada para digitação consciente")
-	assert(tm.get_flow_state_name() == "EQUILIBRADO", "Ritmo normalizado na troca de seção")
-	print("  ✓ Seções pedagógicas com 40 teclas e reset de fluxo validados.")
+	assert(tm.get_flow_state_name() == "EQUILIBRADO", "Ritmo normalizado na troca de seção/fase")
+	print("  ✓ Reset de fluxo validado com sucesso.")
 
 func test_ten_fixed_columns_finger_mapping() -> void:
 	print("[TEST] Sistema de 10 Colunas Fixas para Associação Dedo-a-Tecla...")
@@ -199,9 +197,9 @@ func test_ten_fixed_columns_finger_mapping() -> void:
 	print("  ✓ Mapeamento das 10 colunas fixas e associação dedo-tecla validada com sucesso.")
 
 func test_wave_3_lower_row_pairs() -> void:
-	print("[TEST] Fase 3 Pares da Linha Inferior (B-N, V-M, C-, X-., Z-;)...")
-	var q3: Array[Dictionary] = WordManager.generate_wave_queue(3)
-	assert(q3.size() > 0, "Fase 3 deve ter itens")
+	print("[TEST] Linha Inferior com Pontuação (B-N, V-M, C-, X-., Z-; na Fase 18 Master)...")
+	var q18: Array[Dictionary] = WordManager.generate_wave_queue(18)
+	assert(q18.size() == 60, "Fase 18 deve ter 60 itens no Master da Linha Inferior")
 	
 	var found_b: bool = false
 	var found_v: bool = false
@@ -209,7 +207,7 @@ func test_wave_3_lower_row_pairs() -> void:
 	var found_dot: bool = false
 	var found_semi: bool = false
 	
-	for item in q3:
+	for item in q18:
 		var w: String = item["word"]
 		if w == "B": found_b = true
 		if w == "V": found_v = true
@@ -218,44 +216,45 @@ func test_wave_3_lower_row_pairs() -> void:
 		if w == ";": found_semi = true
 		
 	assert(found_b and found_v and found_comma and found_dot and found_semi, "Todos os pares da linha inferior devem estar presentes")
-	print("  ✓ Pares da Linha Inferior da Fase 3 validados.")
+	print("  ✓ Pares da Linha Inferior da Fase 18 validados.")
 
 func test_wave_4_heavy_cruisers() -> void:
-	print("[TEST] Fase 4 Cruzadores Pesados (2-HP e 3-HP)...")
-	var q4: Array[Dictionary] = WordManager.generate_wave_queue(4)
-	assert(q4.size() == 50, "Fase 4 deve ter 50 cruzadores no total")
-	# 1ª metade: 25 cruzadores 2-HP a 24.0 px/s
+	print("[TEST] Fases 19 e 20: Cruzadores Pesados (2-HP e 3-HP)...")
+	var q19: Array[Dictionary] = WordManager.generate_wave_queue(19)
+	assert(q19.size() == 25, "Fase 19 deve ter 25 cruzadores 2-HP")
 	for i in range(25):
-		var item = q4[i]
+		var item = q19[i]
 		var w: String = item["word"]
-		assert(w.length() == 2, "1ª metade da Fase 4 deve ter cruzadores de 2 caracteres")
+		assert(w.length() == 2, "Fase 19 deve ter cruzadores de 2 caracteres")
 		assert(item["scale"] == 1.35, "Escala 1.35x para cruzadores 2-HP")
 		assert(item.get("speed", -1.0) == 24.0, "Velocidade de 24.0 px/s para cruzadores 2-HP")
 		assert(item["tag"] == "CRUZADOR 2-HP", "Tag CRUZADOR 2-HP")
-	# 2ª metade: 25 cruzadores 3-HP mais lentos a 19.0 px/s
-	for i in range(25, 50):
-		var item = q4[i]
+		
+	var q20: Array[Dictionary] = WordManager.generate_wave_queue(20)
+	assert(q20.size() == 25, "Fase 20 deve ter 25 cruzadores 3-HP")
+	for i in range(25):
+		var item = q20[i]
 		var w: String = item["word"]
-		assert(w.length() == 3, "2ª metade da Fase 4 deve ter cruzadores de 3 caracteres")
+		assert(w.length() == 3, "Fase 20 deve ter cruzadores de 3 caracteres")
 		assert(item["scale"] == 1.45, "Escala 1.45x para cruzadores 3-HP")
 		assert(item.get("speed", -1.0) == 19.0, "Velocidade de 19.0 px/s para cruzadores 3-HP")
 		assert(item["tag"] == "CRUZADOR 3-HP", "Tag CRUZADOR 3-HP")
-	print("  ✓ Cruzadores pesados 2-HP e 3-HP da Fase 4 validados.")
+	print("  ✓ Cruzadores pesados 2-HP e 3-HP das Fases 19 e 20 validados.")
 
 func test_wave_5_long_words_pacing() -> void:
-	print("[TEST] Fase 5 Palavras Longas com Quantidade Reduzida e Movimento Cadenciado...")
-	var q5: Array[Dictionary] = WordManager.generate_wave_queue(5)
-	assert(q5.size() == 18, "Fase 5 deve ter 18 alvos spawnados (quantidade reduzida)")
-	for item in q5:
+	print("[TEST] Fase 21: Palavras Longas com Quantidade Reduzida e Movimento Cadenciado...")
+	var q21: Array[Dictionary] = WordManager.generate_wave_queue(21)
+	assert(q21.size() == 18, "Fase 21 deve ter 18 alvos spawnados (quantidade reduzida)")
+	for item in q21:
 		var w: String = item["word"]
-		assert(w.length() >= 4, "Palavras da Fase 5 devem ser palavras (>= 4 letras)")
-		assert(item.get("speed", -1.0) == 19.0, "Velocidade da Fase 5 reduzida para 19.0 px/s")
-	print("  ✓ Pacing e redução de quantidade da Fase 5 validados.")
+		assert(w.length() >= 4, "Palavras da Fase 21 devem ter >= 4 letras")
+		assert(item.get("speed", -1.0) == 19.0, "Velocidade da Fase 21 reduzida para 19.0 px/s")
+	print("  ✓ Pacing e redução de quantidade da Fase 21 validados.")
 
 func test_wave_6_mixed_spawns() -> void:
-	print("[TEST] Fase 6+ Spawns Misturados com Todas as Opções Anteriores...")
-	var q6: Array[Dictionary] = WordManager.generate_wave_queue(6)
-	assert(q6.size() == 35, "Fase 6 deve ter 35 alvos distribuídos em 7 categorias")
+	print("[TEST] Fase 22+: Spawns Misturados com Todas as Opções Anteriores...")
+	var q22: Array[Dictionary] = WordManager.generate_wave_queue(22)
+	assert(q22.size() == 35, "Fase 22 deve ter 35 alvos distribuídos em 7 categorias")
 	
 	var found_base: bool = false
 	var found_upper: bool = false
@@ -265,7 +264,7 @@ func test_wave_6_mixed_spawns() -> void:
 	var found_stretch: bool = false
 	var found_advanced: bool = false
 	
-	for item in q6:
+	for item in q22:
 		var tag: String = item["tag"]
 		var w: String = item["word"]
 		if tag == "BASE":
@@ -293,18 +292,18 @@ func test_wave_6_mixed_spawns() -> void:
 			assert(w.length() >= 7, "Palavra avançada tem >= 7 letras")
 			assert(item.get("speed", -1.0) == 16.0, "Velocidade avançada = 16.0 px/s")
 			
-	assert(found_base, "Fase 6 deve conter alvos da Linha de Base (Fase 1)")
-	assert(found_upper, "Fase 6 deve conter alvos da Linha Superior (Fase 2)")
-	assert(found_lower, "Fase 6 deve conter alvos da Linha Inferior com pontuação (Fase 3)")
-	assert(found_cruiser2, "Fase 6 deve conter Cruzadores 2-HP (Fase 4)")
-	assert(found_cruiser3, "Fase 6 deve conter Cruzadores 3-HP (Fase 4)")
-	assert(found_stretch, "Fase 6 deve conter palavras de Alcance Difícil (Fase 5)")
-	assert(found_advanced, "Fase 6 deve conter termos cósmicos Avançados (Fase 6)")
+	assert(found_base, "Fase 22 deve conter alvos da Linha de Base")
+	assert(found_upper, "Fase 22 deve conter alvos da Linha Superior")
+	assert(found_lower, "Fase 22 deve conter alvos da Linha Inferior com pontuação")
+	assert(found_cruiser2, "Fase 22 deve conter Cruzadores 2-HP")
+	assert(found_cruiser3, "Fase 22 deve conter Cruzadores 3-HP")
+	assert(found_stretch, "Fase 22 deve conter palavras de Alcance Difícil")
+	assert(found_advanced, "Fase 22 deve conter termos cósmicos Avançados")
 	
-	# Validar escalabilidade em ondas superiores (ex: Fase 7)
-	var q7: Array[Dictionary] = WordManager.generate_wave_queue(7)
-	assert(q7.size() == 42, "Fase 7 deve ter 42 alvos (6 por categoria)")
-	print("  ✓ Spawns misturados da Fase 6+ validados com sucesso.")
+	# Validar escalabilidade em ondas superiores (ex: Fase 23)
+	var q23: Array[Dictionary] = WordManager.generate_wave_queue(23)
+	assert(q23.size() == 42, "Fase 23 deve ter 42 alvos (6 por categoria)")
+	print("  ✓ Spawns misturados da Fase 22+ validados com sucesso.")
 
 func test_enemy_word_visual_customization() -> void:
 	print("[TEST] EnemyWord com Coloração, Escala e Foco à Frente (Z-Index 50)...")

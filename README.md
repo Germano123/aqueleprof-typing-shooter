@@ -50,46 +50,47 @@ Para reforçar a memória muscular espacial e a correspondência motora dedo-tec
 
 ## 📚 Progressão Pedagógica das Fases
 
-### Fases 1, 2 e 3 (Estrutura de 300 Inimigos por Fase)
-Cada fase inicial organiza o aprendizado em **5 seções estruturadas de 40 teclas seguidas por par simétrico** + **100 teclas na sequência final de consolidação**:
+O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 60 inimigos cada, durando ~1 a 2 minutos). Cada etapa de introdução de novas teclas e novos tipos de inimigos opera como uma **fase independente**, permitindo frequentes telas de vitória, fanfarras de conquista, exibição de métricas detalhadas (KPIs) e uma nítida sensação de avanço contínuo:
 
-1. **Fase 1 (Linha de Base - Ciano Elétrico)**:
-   - Seção 1: Par `F - J` (40 teclas)
-   - Seção 2: Par `G - H` (40 teclas)
-   - Seção 3: Par `D - K` (40 teclas)
-   - Seção 4: Par `S - L` (40 teclas)
-   - Seção 5: Par `A - Ç` (40 teclas)
-   - Seção 6: Sequência Final Mista da Linha de Base (100 teclas)
+### 🏠 Bloco 1: Linha de Base (Home Row - Fases 1 a 6)
+- **Fase 1: Indicadores Base (`F` - `J`)** (40 inimigos | Ciano Elétrico)
+  - Assimilação dos pontos de repouso dos indicadores com as marcações táteis do teclado.
+- **Fase 2: Novos Indicadores Centro (`G` - `H`)** (40 inimigos: 24 G/H + 16 F/J)
+  - Deslocamento lateral dos indicadores e retorno imediato à base.
+- **Fase 3: Novos Dedos Médios (`D` - `K`)** (40 inimigos: 24 D/K + 16 fixação)
+  - Ativação dos dedos médios com reforço dos indicadores já aprendidos.
+- **Fase 4: Novos Dedos Anelares (`S` - `L`)** (40 inimigos: 24 S/L + 16 fixação)
+  - Desenvolvimento da independência motora dos dedos anelares.
+- **Fase 5: Novos Dedos Mínimos (`A` - `Ç`)** (40 inimigos: 24 A/Ç + 16 fixação)
+  - Domínio das extremidades da linha de base pelos dedos mínimos.
+- **Fase 6: Desafio Master da Linha de Base** (60 inimigos | Ouro Ciano)
+  - Teste integrativo com todos os pares da linha de base misturados em alta velocidade.
 
-2. **Fase 2 (Linha Superior - Verde Esmeralda)**:
-   - Seção 1: Par `R - U` (40 teclas)
-   - Seção 2: Par `T - Y` (40 teclas)
-   - Seção 3: Par `E - I` (40 teclas)
-   - Seção 4: Par `W - O` (40 teclas)
-   - Seção 5: Par `Q - P` (40 teclas)
-   - Seção 6: Sequência Final Mista da Linha Superior (100 teclas)
+### ⬆️ Bloco 2: Linha Superior (Top Row - Fases 7 a 12)
+- **Fase 7: Indicadores Superior (`R` - `U`)** (40 inimigos | Verde Esmeralda)
+- **Fase 8: Novos Indicadores Centro Superior (`T` - `Y`)** (40 inimigos: 24 T/Y + 16 R/U)
+- **Fase 9: Novos Médios Superior (`E` - `I`)** (40 inimigos: 24 E/I + 16 fixação)
+- **Fase 10: Novos Anelares Superior (`W` - `O`)** (40 inimigos: 24 W/O + 16 fixação)
+- **Fase 11: Novos Mínimos Superior (`Q` - `P`)** (40 inimigos: 24 Q/P + 16 fixação)
+- **Fase 12: Desafio Master da Linha Superior** (60 inimigos | Ouro Esmeralda)
 
-3. **Fase 3 (Linha Inferior com Pontuação - Âmbar Solar)**:
-   - Seção 1: Par `B - N` (40 teclas)
-   - Seção 2: Par `V - M` (40 teclas)
-   - Seção 3: Par `C - ,` (40 teclas)
-   - Seção 4: Par `X - .` (40 teclas)
-   - Seção 5: Par `Z - ;` (40 teclas)
-   - Seção 6: Sequência Final Mista da Linha Inferior (100 teclas)
+### ⬇️ Bloco 3: Linha Inferior & Pontuação (Bottom Row - Fases 13 a 18)
+- **Fase 13: Indicadores Inferior (`B` - `N`)** (40 inimigos | Âmbar Solar)
+- **Fase 14: Novos Indicadores Centro Inferior (`V` - `M`)** (40 inimigos: 24 V/M + 16 B/N)
+- **Fase 15: Novos Médios & Vírgula (`C` - `,`)** (40 inimigos: 24 C/, + 16 fixação)
+- **Fase 16: Novos Anelares & Ponto (`X` - `.`)** (40 inimigos: 24 X/. + 16 fixação)
+- **Fase 17: Novos Mínimos & Ponto e Vírgula (`Z` - `;`)** (40 inimigos: 24 Z/; + 16 fixação)
+- **Fase 18: Desafio Master da Linha Inferior** (60 inimigos | Ouro Âmbar)
 
-> 🔔 **Transição entre Seções**: Em cada troca de par, o jogo emite o alerta *"Novos inimigos foram encontrados!"* via rádio tático e áudio comemorativo, **resetando o ritmo** para que o jogador assimile as novas teclas com calma e consciência motora.
-
-### Fase 4 (Cruzadores Pesados & Métrica de 150ms - Carmesim)
-- **50 Cruzadores Espaciais** com escala ampliada (1.35x a 1.45x) e velocidade reduzida:
-  - 1ª Metade: 25 Cruzadores de 2 caracteres (2-HP) a 24 px/s.
-  - 2ª Metade: 25 Cruzadores de 3 caracteres (3-HP) a 19 px/s.
-- **Métrica-Chave**: Cadência alvo estrita de **150ms** de intervalo médio entre teclas registrada nos KPIs.
-
-### Fase 5 (Alcance Difícil - Púrpura Cósmica)
-- 18 palavras longas com saltos complexos de teclado (ex: `PIXEL`, `EQUIPE`, `ZUMBIDO`, `PROJETO`, `COMPLEXO`) a 19 px/s.
-
-### Fase 6+ (Horda Cósmica Mista - Dourado)
-- Mistura procedural de todas as categorias anteriores com dificuldade incremental contínua.
+### 🛡️ Bloco 4: Desafios Avançados & Cruzadores (Fases 19+)
+- **Fase 19: Cruzadores Pesados 2-HP** (25 inimigos | Carmesim | 24 px/s):
+  - Invasores reforçados exigindo 2 disparos consecutivos rápidos; ativação da meta de cadência de **150ms**.
+- **Fase 20: Cruzadores Pesados 3-HP** (25 inimigos | Carmesim Escuro | 19 px/s):
+  - Blindagem tripla testando sequências de 3 caracteres com alta precisão.
+- **Fase 21: Alcance Difícil (Palavras Longas)** (18 inimigos | Púrpura Cósmica | 19 px/s):
+  - Termos complexos com saltos pelo teclado (`PIXEL`, `EQUIPE`, `ZUMBIDO`, `PROJETO`, `COMPLEXO`).
+- **Fase 22+: Horda Cósmica Mista Procedural** (Dourado Infinito):
+  - Spawns combinados de todas as categorias anteriores com dificuldade incremental contínua.
 
 ---
 

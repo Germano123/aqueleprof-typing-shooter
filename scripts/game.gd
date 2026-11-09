@@ -133,25 +133,32 @@ func _start_wave_sequence(wave_num: int) -> void:
 	typing_metrics.start_wave(current_wave)
 	
 	match current_wave:
-		1:
+		1, 2, 3, 4, 5, 6:
+			# Fases 1 a 6: Linha de Base (Cadência acessível para aprendizado de teclas)
 			base_fall_speed = 32.0
 			base_spawn_interval = 1.25
-		2:
+		7, 8, 9, 10, 11, 12:
+			# Fases 7 a 12: Linha Superior
 			base_fall_speed = 35.0
 			base_spawn_interval = 1.15
-		3:
+		13, 14, 15, 16, 17, 18:
+			# Fases 13 a 18: Linha Inferior com Pontuação
 			base_fall_speed = 33.0
 			base_spawn_interval = 1.10
-		4:
-			# Fase 4: Mais lentos que fases anteriores para destacar vida maior (2-HP e 3-HP)
+		19:
+			# Fase 19: Cruzadores 2-HP (24.0 px/s)
 			base_fall_speed = 24.0
 			base_spawn_interval = 1.45
-		5:
-			# Fase 5: Palavras maiores, quantidade reduzida e mais lentos
+		20:
+			# Fase 20: Cruzadores 3-HP (19.0 px/s)
+			base_fall_speed = 19.0
+			base_spawn_interval = 1.55
+		21:
+			# Fase 21: Palavras Longas de Alcance Difícil (19.0 px/s)
 			base_fall_speed = 19.0
 			base_spawn_interval = 2.40
 		_:
-			# Fase 6+: Horda Mista Cósmica - Spawns misturados entre todas as opções anteriores
+			# Fase 22+: Horda Mista Cósmica
 			base_fall_speed = 22.0
 			base_spawn_interval = 1.40
 			
@@ -161,27 +168,49 @@ func _start_wave_sequence(wave_num: int) -> void:
 	
 	var banner_text: String = "Fase %d" % current_wave
 	match current_wave:
-		1: banner_text = "Fase 1: Linha de Base (40 por Par + 100 Sequência Final)"
-		2: banner_text = "Fase 2: Linha Superior (40 por Par + 100 Sequência Final)"
-		3: banner_text = "Fase 3: Linha Inferior (40 por Par + 100 Sequência Final)"
-		4: banner_text = "Fase 4: Cruzadores Pesados 2-HP e 3-HP (Blindagem Reforçada)"
-		5: banner_text = "Fase 5: Alcance Difícil - Palavras Longas (Velocidade Reduzida)"
-		_: banner_text = "Fase %d: Horda Mista Cósmica (Enxame de Todas as Fases)" % current_wave
+		1: banner_text = "Fase 1: Indicadores Base (F - J)"
+		2: banner_text = "Fase 2: Novos Inimigos: Indicadores Centro (G - H)"
+		3: banner_text = "Fase 3: Novos Inimigos: Dedos Médios (D - K)"
+		4: banner_text = "Fase 4: Novos Inimigos: Dedos Anelares (S - L)"
+		5: banner_text = "Fase 5: Novos Inimigos: Dedos Mínimos (A - Ç)"
+		6: banner_text = "Fase 6: Desafio Master da Linha de Base (A S D F G H J K L Ç)"
+		7: banner_text = "Fase 7: Linha Superior (R - U)"
+		8: banner_text = "Fase 8: Novos Inimigos: Linha Superior (T - Y)"
+		9: banner_text = "Fase 9: Novos Inimigos: Linha Superior (E - I)"
+		10: banner_text = "Fase 10: Novos Inimigos: Linha Superior (W - O)"
+		11: banner_text = "Fase 11: Novos Inimigos: Linha Superior (Q - P)"
+		12: banner_text = "Fase 12: Desafio Master da Linha Superior"
+		13: banner_text = "Fase 13: Linha Inferior (B - N)"
+		14: banner_text = "Fase 14: Novos Inimigos: Linha Inferior (V - M)"
+		15: banner_text = "Fase 15: Novos Inimigos: Linha Inferior (C - ,)"
+		16: banner_text = "Fase 16: Novos Inimigos: Linha Inferior (X - .)"
+		17: banner_text = "Fase 17: Novos Inimigos: Linha Inferior (Z - ;)"
+		18: banner_text = "Fase 18: Desafio Master da Linha Inferior"
+		19: banner_text = "Fase 19: Cruzadores Pesados 2-HP (Blindagem Dupla)"
+		20: banner_text = "Fase 20: Cruzadores Pesados 3-HP (Blindagem Tripla)"
+		21: banner_text = "Fase 21: Alcance Difícil - Palavras Longas"
+		_: banner_text = "Fase %d: Horda Mista Cósmica" % current_wave
 		
 	hud.show_wave_banner(banner_text)
 	typing_panel.add_log("=== %s ===" % banner_text)
 	
 	match current_wave:
 		1:
-			typing_panel.set_computer_message("Para disparos mais fortes você precisa manter seu ritmo constante.")
+			typing_panel.set_computer_message("Inicie com os indicadores nas teclas base F e J.")
 		2:
-			typing_panel.set_computer_message("Alerta! Próxima horda está a caminho.", true)
+			typing_panel.set_computer_message("Novos invasores detectados: estenda os indicadores para G e H!", true)
 		3:
-			typing_panel.set_computer_message("Alternar entre os canhões ganha mais pontos.")
-		4, 5:
-			typing_panel.set_computer_message("Inimigos mais fortes já estão na linha de frente.", true)
+			typing_panel.set_computer_message("Invasores nas colunas dos dedos médios: prepare D e K!", true)
+		4:
+			typing_panel.set_computer_message("Alvos nos dedos anelares: posicione S e L!", true)
+		5:
+			typing_panel.set_computer_message("Alvos nos extremos: use os dedos mínimos em A e Ç!", true)
+		6:
+			typing_panel.set_computer_message("Alerta geral! Enxame completo da Linha de Base detectado!", true)
+		19, 20:
+			typing_panel.set_computer_message("Inimigos blindados na linha de frente! Mantenha ritmo para destruí-los.", true)
 		_:
-			typing_panel.set_computer_message("Alerta máximo! Horda mista detectada com alvos de todas as frotas!", true)
+			typing_panel.set_computer_message("Para disparos mais fortes você precisa manter seu ritmo constante.")
 	
 	# Inicia a onda garantindo pelo menos 4 alvos visíveis e ativos na tela com escalonamento vertical
 	var initial_staggers: Array[float] = [150.0, 100.0, 50.0, 0.0]

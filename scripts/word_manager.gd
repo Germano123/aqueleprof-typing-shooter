@@ -61,12 +61,32 @@ const WORDS_ADVANCED_SPACE: Array[String] = [
 
 # Configurações Visuais por Fase (Cor do Inimigo e Escala)
 const WAVE_VISUAL_CONFIG: Dictionary = {
-	1: {"color": Color(0.25, 0.85, 1.0), "scale": 1.0, "name": "Ciano Elétrico"},     # Fase 1: Ciano
-	2: {"color": Color(0.25, 1.0, 0.45), "scale": 1.0, "name": "Verde Esmeralda"},    # Fase 2: Verde
-	3: {"color": Color(1.0, 0.75, 0.15), "scale": 1.05, "name": "Âmbar Solar"},        # Fase 3: Âmbar/Dourado
-	4: {"color": Color(1.0, 0.28, 0.38), "scale": 1.35, "name": "Carmesim Pesado"},   # Fase 4: Carmesim/Cruzador Pesado
-	5: {"color": Color(0.85, 0.35, 1.0), "scale": 1.15, "name": "Púrpura Cósmica"},   # Fase 5: Púrpura
-	6: {"color": Color(1.0, 0.9, 0.25), "scale": 1.25, "name": "Overdrive Dourado"}   # Fase 6+: Ouro
+	# Linha de Base (Fases 1 a 6)
+	1: {"color": Color(0.25, 0.85, 1.0), "scale": 1.0, "name": "Ciano Elétrico (F-J)"},
+	2: {"color": Color(0.2, 0.95, 0.9), "scale": 1.0, "name": "Ciano Centro (G-H)"},
+	3: {"color": Color(0.25, 0.95, 0.7), "scale": 1.0, "name": "Turquesa (D-K)"},
+	4: {"color": Color(0.3, 1.0, 0.5), "scale": 1.0, "name": "Verde Esmeralda (S-L)"},
+	5: {"color": Color(0.55, 1.0, 0.3), "scale": 1.0, "name": "Verde Limão (A-Ç)"},
+	6: {"color": Color(0.25, 0.9, 1.0), "scale": 1.05, "name": "Ciano Master (Linha de Base)"},
+	# Linha Superior (Fases 7 a 12)
+	7: {"color": Color(0.25, 1.0, 0.45), "scale": 1.0, "name": "Verde Superior (R-U)"},
+	8: {"color": Color(0.4, 1.0, 0.4), "scale": 1.0, "name": "Verde Centro (T-Y)"},
+	9: {"color": Color(0.6, 1.0, 0.35), "scale": 1.0, "name": "Verde Médio (E-I)"},
+	10: {"color": Color(0.8, 1.0, 0.3), "scale": 1.0, "name": "Verde Anelar (W-O)"},
+	11: {"color": Color(0.95, 0.95, 0.25), "scale": 1.0, "name": "Amarelo Mínimo (Q-P)"},
+	12: {"color": Color(0.3, 1.0, 0.45), "scale": 1.05, "name": "Verde Master (Linha Superior)"},
+	# Linha Inferior com Pontuação (Fases 13 a 18)
+	13: {"color": Color(1.0, 0.85, 0.25), "scale": 1.0, "name": "Âmbar Claro (B-N)"},
+	14: {"color": Color(1.0, 0.75, 0.15), "scale": 1.0, "name": "Âmbar Solar (V-M)"},
+	15: {"color": Color(1.0, 0.7, 0.1), "scale": 1.0, "name": "Dourado (C-,)"},
+	16: {"color": Color(1.0, 0.65, 0.15), "scale": 1.0, "name": "Laranja Âmbar (X-.)"},
+	17: {"color": Color(1.0, 0.55, 0.2), "scale": 1.0, "name": "Laranja Fogo (Z-;)"},
+	18: {"color": Color(1.0, 0.75, 0.15), "scale": 1.05, "name": "Âmbar Solar Master"},
+	# Cruzadores & Fases Especiais (Fases 19 a 22+)
+	19: {"color": Color(1.0, 0.28, 0.38), "scale": 1.35, "name": "Carmesim Pesado (2-HP)"},
+	20: {"color": Color(1.0, 0.22, 0.32), "scale": 1.45, "name": "Carmesim Cruzador (3-HP)"},
+	21: {"color": Color(0.85, 0.35, 1.0), "scale": 1.15, "name": "Púrpura Cósmica"},
+	22: {"color": Color(1.0, 0.9, 0.25), "scale": 1.25, "name": "Overdrive Dourado"}
 }
 
 # 10 Colunas Fixas para Associação Dedo-a-Tecla (Digitação às Cegas - Touch Typing)
@@ -154,7 +174,7 @@ static func get_hand_for_key(k: String) -> String:
 static func get_visual_config_for_wave(wave: int) -> Dictionary:
 	if WAVE_VISUAL_CONFIG.has(wave):
 		return WAVE_VISUAL_CONFIG[wave]
-	return WAVE_VISUAL_CONFIG[6]
+	return WAVE_VISUAL_CONFIG[22]
 
 static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 	var queue: Array[Dictionary] = []
@@ -164,89 +184,205 @@ static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 	
 	match wave:
 		1:
-			# FASE 1: 300 inimigos totais
-			# Parte 1 (200 inimigos em 5 seções de 40 teclas): 40 teclas seguidas de cada par (F-J, G-H, D-K, S-L, A-Ç)
-			for sec_idx in range(PAIRS_HOME_ROW.size()):
-				var pair: Dictionary = PAIRS_HOME_ROW[sec_idx]
-				var sec_id: int = sec_idx + 1
-				for i in range(20):
-					queue.append(_create_enemy_data(pair["left"], "E", pair["name"], tint_col, scale_val, -1.0, sec_id))
-					queue.append(_create_enemy_data(pair["right"], "D", pair["name"], tint_col, scale_val, -1.0, sec_id))
-			# Parte 2 (100 inimigos): Sequência final de todas as teclas da Linha de Base (Seção 6)
-			for round_idx in range(10):
-				for pair in PAIRS_HOME_ROW:
-					queue.append(_create_enemy_data(pair["left"], "E", "LINHA DE BASE", tint_col, scale_val, -1.0, 6))
-					queue.append(_create_enemy_data(pair["right"], "D", "LINHA DE BASE", tint_col, scale_val, -1.0, 6))
-					
+			# FASE 1: Indicadores Base (F - J) - 40 inimigos
+			for i in range(20):
+				queue.append(_create_enemy_data("F", "E", "INDICADOR BASE (F)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("J", "D", "INDICADOR BASE (J)", tint_col, scale_val, -1.0, 1))
+				
 		2:
-			# FASE 2: 300 inimigos totais
-			# Parte 1 (200 inimigos em 5 seções de 40 teclas): 40 teclas seguidas de cada par da Linha Superior (R-U, T-Y, E-I, W-O, Q-P)
-			for sec_idx in range(PAIRS_UPPER_ROW.size()):
-				var pair: Dictionary = PAIRS_UPPER_ROW[sec_idx]
-				var sec_id: int = sec_idx + 1
-				for i in range(20):
-					queue.append(_create_enemy_data(pair["left"], "E", pair["name"], tint_col, scale_val, -1.0, sec_id))
-					queue.append(_create_enemy_data(pair["right"], "D", pair["name"], tint_col, scale_val, -1.0, sec_id))
-			# Parte 2 (100 inimigos): Sequência final de todas as teclas da Linha Superior (Seção 6)
-			for round_idx in range(10):
-				for pair in PAIRS_UPPER_ROW:
-					queue.append(_create_enemy_data(pair["left"], "E", "LINHA SUPERIOR", tint_col, scale_val, -1.0, 6))
-					queue.append(_create_enemy_data(pair["right"], "D", "LINHA SUPERIOR", tint_col, scale_val, -1.0, 6))
+			# FASE 2: Novos Inimigos: Indicadores Centro (G - H) - 40 inimigos
+			# 24 dos novos inimigos (G e H) + 16 de fixação (F e J)
+			for i in range(12):
+				queue.append(_create_enemy_data("G", "E", "NOVO: INDICADOR CENTRO (G)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("H", "D", "NOVO: INDICADOR CENTRO (H)", tint_col, scale_val, -1.0, 1))
+				if i < 8:
+					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
 					
 		3:
-			# FASE 3: 300 inimigos totais
-			# Parte 1 (200 inimigos em 5 seções de 40 teclas): 40 teclas seguidas de cada par da Linha Inferior (B-N, V-M, C-, X-., Z-;)
-			for sec_idx in range(PAIRS_LOWER_ROW.size()):
-				var pair: Dictionary = PAIRS_LOWER_ROW[sec_idx]
-				var sec_id: int = sec_idx + 1
-				for i in range(20):
-					queue.append(_create_enemy_data(pair["left"], "E", pair["name"], tint_col, scale_val, -1.0, sec_id))
-					queue.append(_create_enemy_data(pair["right"], "D", pair["name"], tint_col, scale_val, -1.0, sec_id))
-			# Parte 2 (100 inimigos): Sequência final de todas as teclas da Linha Inferior (Seção 6)
-			for round_idx in range(10):
-				for pair in PAIRS_LOWER_ROW:
-					queue.append(_create_enemy_data(pair["left"], "E", "LINHA INFERIOR", tint_col, scale_val, -1.0, 6))
-					queue.append(_create_enemy_data(pair["right"], "D", "LINHA INFERIOR", tint_col, scale_val, -1.0, 6))
+			# FASE 3: Novos Inimigos: Dedos Médios (D - K) - 40 inimigos
+			# 24 dos novos inimigos (D e K) + 16 de fixação anteriores (F, J, G, H)
+			for i in range(12):
+				queue.append(_create_enemy_data("D", "E", "NOVO: MÉDIO (D)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("K", "D", "NOVO: MÉDIO (K)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("G", "E", "FIXAÇÃO (G)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("H", "D", "FIXAÇÃO (H)", tint_col, scale_val, -1.0, 1))
 					
 		4:
-			# FASE 4: 50 Cruzadores Pesados (Carmesim)
-			# 1ª metade: 25 Cruzadores de 2 caracteres (2-HP) a 24.0 px/s (mais lentos que fases 1-3)
+			# FASE 4: Novos Inimigos: Dedos Anelares (S - L) - 40 inimigos
+			# 24 dos novos inimigos (S e L) + 16 de fixação anteriores
+			for i in range(12):
+				queue.append(_create_enemy_data("S", "E", "NOVO: ANELAR (S)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("L", "D", "NOVO: ANELAR (L)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("D", "E", "FIXAÇÃO (D)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("K", "D", "FIXAÇÃO (K)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
+					
+		5:
+			# FASE 5: Novos Inimigos: Dedos Mínimos (A - Ç) - 40 inimigos
+			# 24 dos novos inimigos (A e Ç) + 16 de fixação anteriores
+			for i in range(12):
+				queue.append(_create_enemy_data("A", "E", "NOVO: MÍNIMO (A)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("Ç", "D", "NOVO: MÍNIMO (Ç)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("S", "E", "FIXAÇÃO (S)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("L", "D", "FIXAÇÃO (L)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("D", "E", "FIXAÇÃO (D)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("K", "D", "FIXAÇÃO (K)", tint_col, scale_val, -1.0, 1))
+					
+		6:
+			# FASE 6: Desafio Master da Linha de Base (60 inimigos)
+			for round_idx in range(6):
+				for pair in PAIRS_HOME_ROW:
+					queue.append(_create_enemy_data(pair["left"], "E", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(pair["right"], "D", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
+					
+		7:
+			# FASE 7: Linha Superior (R - U) - 40 inimigos
+			for i in range(20):
+				queue.append(_create_enemy_data("R", "E", "SUPERIOR (R)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("U", "D", "SUPERIOR (U)", tint_col, scale_val, -1.0, 1))
+				
+		8:
+			# FASE 8: Novos Inimigos: Linha Superior (T - Y) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("T", "E", "NOVO: SUPERIOR (T)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("Y", "D", "NOVO: SUPERIOR (Y)", tint_col, scale_val, -1.0, 1))
+				if i < 8:
+					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
+					
+		9:
+			# FASE 9: Novos Inimigos: Linha Superior (E - I) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("E", "E", "NOVO: SUPERIOR (E)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("I", "D", "NOVO: SUPERIOR (I)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("T", "E", "FIXAÇÃO (T)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("Y", "D", "FIXAÇÃO (Y)", tint_col, scale_val, -1.0, 1))
+					
+		10:
+			# FASE 10: Novos Inimigos: Linha Superior (W - O) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("W", "E", "NOVO: SUPERIOR (W)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("O", "D", "NOVO: SUPERIOR (O)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("E", "E", "FIXAÇÃO (E)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("I", "D", "FIXAÇÃO (I)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
+					
+		11:
+			# FASE 11: Novos Inimigos: Linha Superior (Q - P) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("Q", "E", "NOVO: SUPERIOR (Q)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("P", "D", "NOVO: SUPERIOR (P)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("W", "E", "FIXAÇÃO (W)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("O", "D", "FIXAÇÃO (O)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("E", "E", "FIXAÇÃO (E)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("I", "D", "FIXAÇÃO (I)", tint_col, scale_val, -1.0, 1))
+					
+		12:
+			# FASE 12: Desafio Master da Linha Superior (60 inimigos)
+			for round_idx in range(6):
+				for pair in PAIRS_UPPER_ROW:
+					queue.append(_create_enemy_data(pair["left"], "E", "LINHA SUPERIOR MASTER", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(pair["right"], "D", "LINHA SUPERIOR MASTER", tint_col, scale_val, -1.0, 1))
+					
+		13:
+			# FASE 13: Linha Inferior (B - N) - 40 inimigos
+			for i in range(20):
+				queue.append(_create_enemy_data("B", "E", "INFERIOR (B)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("N", "D", "INFERIOR (N)", tint_col, scale_val, -1.0, 1))
+				
+		14:
+			# FASE 14: Novos Inimigos: Linha Inferior (V - M) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("V", "E", "NOVO: INFERIOR (V)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data("M", "D", "NOVO: INFERIOR (M)", tint_col, scale_val, -1.0, 1))
+				if i < 8:
+					queue.append(_create_enemy_data("B", "E", "FIXAÇÃO (B)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("N", "D", "FIXAÇÃO (N)", tint_col, scale_val, -1.0, 1))
+					
+		15:
+			# FASE 15: Novos Inimigos: Linha Inferior (C - ,) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("C", "E", "NOVO: INFERIOR (C)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data(",", "D", "NOVO: PONTUAÇÃO (,)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("V", "E", "FIXAÇÃO (V)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("M", "D", "FIXAÇÃO (M)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("B", "E", "FIXAÇÃO (B)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("N", "D", "FIXAÇÃO (N)", tint_col, scale_val, -1.0, 1))
+					
+		16:
+			# FASE 16: Novos Inimigos: Linha Inferior (X - .) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("X", "E", "NOVO: INFERIOR (X)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data(".", "D", "NOVO: PONTUAÇÃO (.)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("C", "E", "FIXAÇÃO (C)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(",", "D", "FIXAÇÃO (,)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("V", "E", "FIXAÇÃO (V)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("M", "D", "FIXAÇÃO (M)", tint_col, scale_val, -1.0, 1))
+					
+		17:
+			# FASE 17: Novos Inimigos: Linha Inferior (Z - ;) - 40 inimigos
+			for i in range(12):
+				queue.append(_create_enemy_data("Z", "E", "NOVO: INFERIOR (Z)", tint_col, scale_val, -1.0, 1))
+				queue.append(_create_enemy_data(";", "D", "NOVO: PONTUAÇÃO (;)", tint_col, scale_val, -1.0, 1))
+				if i < 4:
+					queue.append(_create_enemy_data("X", "E", "FIXAÇÃO (X)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(".", "D", "FIXAÇÃO (.)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("C", "E", "FIXAÇÃO (C)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(",", "D", "FIXAÇÃO (,)", tint_col, scale_val, -1.0, 1))
+					
+		18:
+			# FASE 18: Desafio Master da Linha Inferior (60 inimigos)
+			for round_idx in range(6):
+				for pair in PAIRS_LOWER_ROW:
+					queue.append(_create_enemy_data(pair["left"], "E", "LINHA INFERIOR MASTER", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data(pair["right"], "D", "LINHA INFERIOR MASTER", tint_col, scale_val, -1.0, 1))
+					
+		19:
+			# FASE 19: 25 Cruzadores Pesados 2-HP (Carmesim) a 24.0 px/s
 			for i in range(25):
 				var word: String = WORDS_HEAVY_2CHAR[i % WORDS_HEAVY_2CHAR.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
 				queue.append(_create_enemy_data(word, hand, "CRUZADOR 2-HP", tint_col, 1.35, 24.0))
 				
-			# 2ª metade: 25 Cruzadores de 3 caracteres (3-HP) ainda mais lentos a 19.0 px/s
+		20:
+			# FASE 20: 25 Cruzadores Pesados 3-HP (Carmesim) ainda mais lentos a 19.0 px/s
 			for i in range(25):
 				var word: String = WORDS_HEAVY_3CHAR[i % WORDS_HEAVY_3CHAR.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
 				queue.append(_create_enemy_data(word, hand, "CRUZADOR 3-HP", tint_col, 1.45, 19.0))
 				
-		5:
-			# FASE 5: 18 palavras de Alcance Difícil (Púrpura) - quantidade reduzida e mais lentos (19.0 px/s)
+		21:
+			# FASE 21: 18 palavras de Alcance Difícil (Púrpura) - quantidade reduzida e mais lentos (19.0 px/s)
 			for i in range(18):
 				var word: String = WORDS_DIFFICULT_STRETCH[i % WORDS_DIFFICULT_STRETCH.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
 				queue.append(_create_enemy_data(word, hand, "ALCANCE", tint_col, scale_val, 19.0))
 				
 		_:
-			# FASE 6+: Horda Mista Cósmica - Spawns misturados entre todas as opções anteriores
-			# Combina:
-			# 1) Teclas da Linha de Base (Fase 1 - Ciano, 1 letra, 32.0 px/s)
-			# 2) Teclas da Linha Superior (Fase 2 - Verde, 1 letra, 35.0 px/s)
-			# 3) Linha Inferior com Pontuação (Fase 3 - Âmbar, 1 char, 33.0 px/s)
-			# 4) Cruzadores Pesados 2-HP (Fase 4 - Carmesim, 2 letras, 24.0 px/s)
-			# 5) Cruzadores Pesados 3-HP (Fase 4 - Carmesim, 3 letras, 19.0 px/s)
-			# 6) Palavras de Alcance Difícil (Fase 5 - Púrpura, 5-8 letras, 19.0 px/s)
-			# 7) Termos Cósmicos Avançados (Fase 6 - Dourado, 8-14 letras, 16.0 px/s)
+			# FASE 22+: Horda Mista Cósmica - Spawns misturados entre todas as opções anteriores
 			var col_base: Color = WAVE_VISUAL_CONFIG[1]["color"]
-			var col_upper: Color = WAVE_VISUAL_CONFIG[2]["color"]
-			var col_lower: Color = WAVE_VISUAL_CONFIG[3]["color"]
-			var col_cruiser: Color = WAVE_VISUAL_CONFIG[4]["color"]
-			var col_stretch: Color = WAVE_VISUAL_CONFIG[5]["color"]
-			var col_cosmic: Color = WAVE_VISUAL_CONFIG[6]["color"]
+			var col_upper: Color = WAVE_VISUAL_CONFIG[7]["color"]
+			var col_lower: Color = WAVE_VISUAL_CONFIG[13]["color"]
+			var col_cruiser: Color = WAVE_VISUAL_CONFIG[19]["color"]
+			var col_stretch: Color = WAVE_VISUAL_CONFIG[21]["color"]
+			var col_cosmic: Color = WAVE_VISUAL_CONFIG[22]["color"]
 			
-			var count_per_type: int = 5 + (wave - 6)
+			var count_per_type: int = 5 + (wave - 22)
 			
 			# 1. Linha de Base
 			for i in range(count_per_type):

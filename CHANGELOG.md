@@ -6,6 +6,38 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [1.3.0] - 2026-11-09
+
+### Adicionado
+- **Arquitetura de Fases Modulares por Introdução de Teclas**:
+  - Transformação de cada etapa de aprendizado em uma fase independente completa (~40 a 60 inimigos por onda, com duração ágil de ~1-2 min).
+  - Loop de feedback positivo acelerado: telas de vitória e KPIs ao final de cada par introduzido, gerando sensação imediata de conquista e evolução.
+  - **Fases 1 a 6 (Linha de Base)**:
+    - Fase 1: Par `F - J` (40 inimigos)
+    - Fase 2: Novos `G - H` (40 inimigos: 24 novos + 16 fixação)
+    - Fase 3: Novos `D - K` (40 inimigos: 24 novos + 16 fixação)
+    - Fase 4: Novos `S - L` (40 inimigos: 24 novos + 16 fixação)
+    - Fase 5: Novos `A - Ç` (40 inimigos: 24 novos + 16 fixação)
+    - Fase 6: Desafio Master Linha de Base (60 inimigos)
+  - **Fases 7 a 12 (Linha Superior)**:
+    - Fases individuais para `R - U`, `T - Y`, `E - I`, `W - O`, `Q - P`, culminando no Desafio Master Linha Superior (Fase 12).
+  - **Fases 13 a 18 (Linha Inferior e Pontuação)**:
+    - Fases individuais para `B - N`, `V - M`, `C - ,`, `X - .`, `Z - ;`, culminando no Desafio Master Linha Inferior (Fase 18).
+  - **Fases 19 e 20 (Cruzadores Pesados)**:
+    - Fase 19 com 25 Cruzadores 2-HP (24 px/s) e Fase 20 com 25 Cruzadores 3-HP (19 px/s).
+  - **Fase 21 (Palavras Longas de Alcance Difícil)**:
+    - 18 termos desafiadores em velocidade cadenciada (19 px/s).
+  - **Fase 22+ (Horda Cósmica Mista Procedural)**:
+    - Combinação de todas as classes com escalonamento infinito.
+- **Configuração Visual e Computador de Bordo Personalizados**:
+  - Paletas de cores exclusivas para as 22+ fases em `WordManager.WAVE_VISUAL_CONFIG`.
+  - Mensagens situacionais no Computador de Bordo e banners de fase informando os pares específicos e instruções táticas para cada onda.
+
+### Modificado
+- `test_runner.gd` expandido para validar a nova malha de progressão de 22+ fases e a DDA contínua.
+
+---
+
 ## [1.2.0] - 2026-11-09
 
 ### Adicionado
