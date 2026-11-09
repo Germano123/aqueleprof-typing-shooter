@@ -3,6 +3,10 @@ extends SceneTree
 # TestRunner - Script automatizado para testar cadência de 150ms, spawn gamificado e KPIs
 
 func _init() -> void:
+	var diff_mgr = load("res://scripts/difficulty_manager.gd").new()
+	diff_mgr.name = "DifficultyManager"
+	root.add_child(diff_mgr)
+
 	var snd_mgr = load("res://scripts/sound_manager.gd").new()
 	snd_mgr.name = "SoundManager"
 	root.add_child(snd_mgr)
@@ -12,6 +16,7 @@ func _init() -> void:
 	root.add_child(score_mgr)
 
 	print("--- INICIANDO TESTES DE CADÊNCIA ALVO DE 150MS, DDA, ONDAS PEDAGÓGICAS E GAME OVER ---")
+	test_difficulty_manager_balance(diff_mgr)
 	test_target_cadence_wave4()
 	test_wave_colors_and_content()
 	test_wave_1_2_3_ordered_pairs_and_sequence()
@@ -537,6 +542,54 @@ func test_game_over_enemy_stop() -> void:
 	
 	enemy.free()
 	print("  ✓ Congelamento de inimigos no Game Over validado com sucesso.")
+
+func test_difficulty_manager_balance(dm) -> void:
+	print("[TEST] DifficultyManager: Balanceamento JSON, Presets e Multiplataforma (Desktop vs Web)...")
+	assert(dm != null, "DifficultyManager deve existir")
+	
+	# 1. Validar valores padrão carregados do JSON
+	var cnt1: int = dm.get_enemy_count(1)
+	var spd1: float = dm.get_fall_speed(1)
+	var spw1: float = dm.get_spawn_interval(1)
+	assert(cnt1 == 40, "Fase 1 deve ter 40 tropas por padrão (obtido: %d)" % cnt1)
+	assert(is_equal_approx(spd1, 32.0), "Fase 1 deve ter velocidade 32.0 px/s (obtido: %f)" % spd1)
+	assert(is_equal_approx(spw1, 1.25), "Fase 1 deve ter intervalo 1.25s (obtido: %f)" % spw1)
+	
+	var cnt6: int = dm.get_enemy_count(6)
+	assert(cnt6 == 60, "Fase 6 Master deve ter 60 tropas por padrão (obtido: %d)" % cnt6)
+	
+	var cnt19: int = dm.get_enemy_count(19)
+	var spd19: float = dm.get_fall_speed(19)
+	assert(cnt19 == 25, "Fase 19 Cruzadores deve ter 25 tropas por padrão")
+	assert(is_equal_approx(spd19, 24.0), "Fase 19 deve ter velocidade 24.0 px/s")
+	
+	# 2. Testar aplicação de Presets
+	dm.apply_preset("facil")
+	var cnt1_facil: int = dm.get_enemy_count(1)
+	var spd1_facil: float = dm.get_fall_speed(1)
+	assert(cnt1_facil == 30, "Preset Fácil (0.75x) em 40 tropas deve resultar em 30 tropas (obtido: %d)" % cnt1_facil)
+	assert(is_equal_approx(spd1_facil, 25.6), "Preset Fácil (0.8x) em 32.0 px/s deve ser 25.6 (obtido: %f)" % spd1_facil)
+	
+	# 3. Testar restauração de padrões
+	dm.reset_to_defaults()
+	assert(dm.get_enemy_count(1) == 40, "Após reset, Fase 1 deve voltar a 40 tropas")
+	assert(is_equal_approx(dm.get_fall_speed(1), 32.0), "Após reset, Fase 1 deve voltar a 32.0 px/s")
+	
+	# 4. Testar alteração pontual por fase
+	dm.set_wave_balance(1, 55, 45.0, 0.9)
+	assert(dm.get_enemy_count(1) == 55, "Customização de Fase 1 deve resultar em 55 tropas")
+	assert(is_equal_approx(dm.get_fall_speed(1), 45.0), "Customização de Fase 1 deve resultar em 45.0 px/s")
+	assert(is_equal_approx(dm.get_spawn_interval(1), 0.9), "Customização de Fase 1 deve resultar em 0.9s de intervalo")
+	
+	# 5. Testar comportamento em modo Web (sem escrita em disco)
+	dm.is_web = true
+	var saved_web: bool = dm.save_config()
+	assert(saved_web == true, "save_config() na Web deve retornar true (mantido em memória na sessão)")
+	
+	# Restaurar modo desktop e padrões
+	dm.is_web = false
+	dm.reset_to_defaults()
+	print("  ✓ DifficultyManager validado com sucesso em todos os cenários.")
 
 
 

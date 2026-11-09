@@ -145,6 +145,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "COMO JOGAR"
 
+[node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(240, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "CONFIGURAÇÕES"
+
 [node name="AudioButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(240, 42)
 layout_mode = 2
@@ -216,3 +225,190 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "ENTENDIDO!"
+
+[node name="SettingsModal" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -260.0
+offset_right = 350.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsModal/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "BALANCEAMENTO & DIFICULDADE"
+horizontal_alignment = 1
+
+[node name="PlatformInfoLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.85, 1, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "🖥️ MODO DESKTOP: Configurações salvas no arquivo JSON local"
+horizontal_alignment = 1
+
+[node name="ScopeHBox" type="HBoxContainer" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScopeLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/ScopeHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Selecionar Fase:"
+
+[node name="WaveOptionButton" type="OptionButton" parent="SettingsModal/MarginContainer/VBoxContainer/ScopeHBox"]
+custom_minimum_size = Vector2(300, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PresetsHBox" type="HBoxContainer" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PresetLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/PresetsHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Presets Globais:"
+
+[node name="PresetFacilBtn" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/PresetsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fácil (0.8x)"
+
+[node name="PresetNormalBtn" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/PresetsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Normal (1.0x)"
+
+[node name="PresetDificilBtn" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/PresetsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Difícil (1.25x)"
+
+[node name="HSeparator1" type="HSeparator" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="SpeedLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Velocidade de Queda:"
+
+[node name="SpeedSlider" type="HSlider" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(240, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 10.0
+max_value = 80.0
+step = 1.0
+value = 32.0
+
+[node name="SpeedValueLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "32.0 px/s"
+
+[node name="CountLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Quantidade de Tropas:"
+
+[node name="CountSlider" type="HSlider" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(240, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 6.0
+max_value = 100.0
+step = 2.0
+value = 40.0
+
+[node name="CountValueLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "40 tropas"
+
+[node name="SpawnLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Intervalo de Spawn:"
+
+[node name="SpawnSlider" type="HSlider" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(240, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.4
+max_value = 3.0
+step = 0.05
+value = 1.25
+
+[node name="SpawnValueLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "1.25 s"
+
+[node name="FeedbackLabel" type="Label" parent="SettingsModal/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1.0, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[node name="ActionButtonsHBox" type="HBoxContainer" parent="SettingsModal/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SaveButton" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/ActionButtonsHBox"]
+custom_minimum_size = Vector2(170, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "SALVAR ALTERAÇÕES"
+
+[node name="ResetButton" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/ActionButtonsHBox"]
+custom_minimum_size = Vector2(160, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "RESTAURAR PADRÕES"
+
+[node name="CloseSettingsButton" type="Button" parent="SettingsModal/MarginContainer/VBoxContainer/ActionButtonsHBox"]
+custom_minimum_size = Vector2(110, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "VOLTAR"

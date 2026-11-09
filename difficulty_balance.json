@@ -1,0 +1,168 @@
+{
+  "_descricao": "Configurações de Balanceamento e Dificuldade do Typing Shooter",
+  "_instrucoes": "Ajuste a velocidade de queda (em pixels por segundo), a quantidade de tropas/inimigos e o intervalo de surgimento (em segundos) por fase. Também é possível aplicar multiplicadores globais.",
+  "modificadores_globais": {
+    "multiplicador_velocidade": 1.0,
+    "multiplicador_quantidade": 1.0,
+    "multiplicador_spawn_intervalo": 1.0
+  },
+  "presets": {
+    "facil": {
+      "nome": "Cadência Fácil",
+      "multiplicador_velocidade": 0.8,
+      "multiplicador_quantidade": 0.75,
+      "multiplicador_spawn_intervalo": 1.3
+    },
+    "normal": {
+      "nome": "Equilíbrio Padrão",
+      "multiplicador_velocidade": 1.0,
+      "multiplicador_quantidade": 1.0,
+      "multiplicador_spawn_intervalo": 1.0
+    },
+    "dificil": {
+      "nome": "Desafio Frenético",
+      "multiplicador_velocidade": 1.25,
+      "multiplicador_quantidade": 1.25,
+      "multiplicador_spawn_intervalo": 0.8
+    }
+  },
+  "fases": {
+    "1": {
+      "nome": "Linha de Base - Indicadores Base (F - J)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.25
+    },
+    "2": {
+      "nome": "Linha de Base - Novos Indicadores Centro (G - H)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.25
+    },
+    "3": {
+      "nome": "Linha de Base - Novos Dedos Médios (D - K)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.25
+    },
+    "4": {
+      "nome": "Linha de Base - Novos Dedos Anelares (S - L)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.25
+    },
+    "5": {
+      "nome": "Linha de Base - Novos Dedos Mínimos (A - Ç)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.25
+    },
+    "6": {
+      "nome": "Linha de Base - Desafio Master Completo",
+      "quantidade_inimigos": 60,
+      "velocidade_queda": 32.0,
+      "intervalo_spawn": 1.20
+    },
+    "7": {
+      "nome": "Linha Superior - Indicadores Superior (R - U)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.15
+    },
+    "8": {
+      "nome": "Linha Superior - Novos Indicadores Centro (T - Y)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.15
+    },
+    "9": {
+      "nome": "Linha Superior - Novos Dedos Médios (E - I)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.15
+    },
+    "10": {
+      "nome": "Linha Superior - Novos Dedos Anelares (W - O)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.15
+    },
+    "11": {
+      "nome": "Linha Superior - Novos Dedos Mínimos (Q - P)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.15
+    },
+    "12": {
+      "nome": "Linha Superior - Desafio Master Completo",
+      "quantidade_inimigos": 60,
+      "velocidade_queda": 35.0,
+      "intervalo_spawn": 1.10
+    },
+    "13": {
+      "nome": "Linha Inferior - Indicadores Inferior (B - N)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.10
+    },
+    "14": {
+      "nome": "Linha Inferior - Novos Indicadores Centro (V - M)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.10
+    },
+    "15": {
+      "nome": "Linha Inferior - Novos Médios e Vírgula (C - ,)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.10
+    },
+    "16": {
+      "nome": "Linha Inferior - Novos Anelares e Ponto (X - .)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.10
+    },
+    "17": {
+      "nome": "Linha Inferior - Novos Mínimos e Ponto e Vírgula (Z - ;)",
+      "quantidade_inimigos": 40,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.10
+    },
+    "18": {
+      "nome": "Linha Inferior - Desafio Master com Pontuação",
+      "quantidade_inimigos": 60,
+      "velocidade_queda": 33.0,
+      "intervalo_spawn": 1.05
+    },
+    "19": {
+      "nome": "Cruzadores Pesados 2-HP (Blindagem Dupla)",
+      "quantidade_inimigos": 25,
+      "velocidade_queda": 24.0,
+      "intervalo_spawn": 1.45
+    },
+    "20": {
+      "nome": "Cruzadores Pesados 3-HP (Blindagem Tripla)",
+      "quantidade_inimigos": 25,
+      "velocidade_queda": 19.0,
+      "intervalo_spawn": 1.55
+    },
+    "21": {
+      "nome": "Alcance Difícil - Palavras Longas Cadenciadas",
+      "quantidade_inimigos": 18,
+      "velocidade_queda": 19.0,
+      "intervalo_spawn": 2.40
+    },
+    "22": {
+      "nome": "Horda Cósmica Mista Procedural",
+      "quantidade_inimigos": 35,
+      "velocidade_queda": 22.0,
+      "intervalo_spawn": 1.40
+    }
+  },
+  "fases_superiores_padrao": {
+    "quantidade_inimigos": 35,
+    "velocidade_queda": 22.0,
+    "intervalo_spawn": 1.40
+  }
+}

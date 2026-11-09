@@ -114,7 +114,6 @@ func start_game() -> void:
 	typing_panel.add_log("💡 MODO DEBUG: F1 PARA AVANÇAR DE ONDA")
 	
 	_start_wave_sequence(current_wave)
-	_start_wave_sequence(current_wave)
 
 func _start_wave_sequence(wave_num: int) -> void:
 	current_wave_transition_id += 1
@@ -132,35 +131,34 @@ func _start_wave_sequence(wave_num: int) -> void:
 	typing_panel.update_wave_progress(0, total_wave_enemies, current_wave)
 	typing_metrics.start_wave(current_wave)
 	
-	match current_wave:
-		1, 2, 3, 4, 5, 6:
-			# Fases 1 a 6: Linha de Base (Cadência acessível para aprendizado de teclas)
-			base_fall_speed = 32.0
-			base_spawn_interval = 1.25
-		7, 8, 9, 10, 11, 12:
-			# Fases 7 a 12: Linha Superior
-			base_fall_speed = 35.0
-			base_spawn_interval = 1.15
-		13, 14, 15, 16, 17, 18:
-			# Fases 13 a 18: Linha Inferior com Pontuação
-			base_fall_speed = 33.0
-			base_spawn_interval = 1.10
-		19:
-			# Fase 19: Cruzadores 2-HP (24.0 px/s)
-			base_fall_speed = 24.0
-			base_spawn_interval = 1.45
-		20:
-			# Fase 20: Cruzadores 3-HP (19.0 px/s)
-			base_fall_speed = 19.0
-			base_spawn_interval = 1.55
-		21:
-			# Fase 21: Palavras Longas de Alcance Difícil (19.0 px/s)
-			base_fall_speed = 19.0
-			base_spawn_interval = 2.40
-		_:
-			# Fase 22+: Horda Mista Cósmica
-			base_fall_speed = 22.0
-			base_spawn_interval = 1.40
+	var tree := get_tree()
+	if tree and tree.root and tree.root.has_node("DifficultyManager"):
+		var dm = tree.root.get_node("DifficultyManager")
+		base_fall_speed = dm.get_fall_speed(current_wave)
+		base_spawn_interval = dm.get_spawn_interval(current_wave)
+	else:
+		match current_wave:
+			1, 2, 3, 4, 5, 6:
+				base_fall_speed = 32.0
+				base_spawn_interval = 1.25
+			7, 8, 9, 10, 11, 12:
+				base_fall_speed = 35.0
+				base_spawn_interval = 1.15
+			13, 14, 15, 16, 17, 18:
+				base_fall_speed = 33.0
+				base_spawn_interval = 1.10
+			19:
+				base_fall_speed = 24.0
+				base_spawn_interval = 1.45
+			20:
+				base_fall_speed = 19.0
+				base_spawn_interval = 1.55
+			21:
+				base_fall_speed = 19.0
+				base_spawn_interval = 2.40
+			_:
+				base_fall_speed = 22.0
+				base_spawn_interval = 1.40
 			
 	spawn_timer.wait_time = maxf(0.5, base_spawn_interval * typing_metrics.get_flow_spawn_multiplier())
 	hud.update_wave(current_wave)

@@ -6,6 +6,29 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [1.4.0] - 2026-11-09
+
+### Adicionado
+- **Sistema de Balanceamento e Dificuldade com Arquivo JSON**:
+  - Criação do arquivo `difficulty_balance.json` na raiz do projeto contendo as regras de velocidade (`velocidade_queda`), quantidade de tropas (`quantidade_inimigos`) e intervalos de surgimento (`intervalo_spawn`) para todas as 22+ fases, além de multiplicadores globais e presets.
+- **Gerenciador Global `DifficultyManager` (Autoload)**:
+  - Carregamento e sincronização automática das regras de balanceamento.
+  - **Suporte Multiplataforma Inteligente**:
+    - **Desktop**: Salva customizações em `user://difficulty_balance.json` e atualiza o arquivo da raiz durante a execução pelo editor.
+    - **Web**: Opera em modo somente-leitura/sessão (`is_web = true`), mantendo ajustes na memória da aba ativa e resetando aos valores originais ao recarregar o jogo.
+  - Métodos utilitários de consulta (`get_enemy_count`, `get_fall_speed`, `get_spawn_interval`), aplicação de presets (`facil`, `normal`, `dificil`) e restauração para os padrões.
+- **Tela de Configurações no Menu Principal (`MainMenu`)**:
+  - Modal interativo com dropdown para seleção de fase individual ou multiplicador global.
+  - Botões de presets rápidos (*Fácil 0.8x*, *Normal 1.0x*, *Difícil 1.25x*).
+  - Sliders com exibição numérica em tempo real para velocidade, quantidade de inimigos e intervalo de spawn.
+  - Indicador visual da plataforma em execução (Desktop com gravação local vs Web com reset automático).
+- **Integração Dinâmica em `WordManager` e `Game`**:
+  - A geração procedural de filas em `WordManager.generate_wave_queue` e o fluxo de combate em `Game._start_wave_sequence` adaptam-se instantaneamente às regras ativas de balanceamento mantendo as proporções pedagógicas de novos alvos e fixação.
+- **Suíte de Testes Automatizada**:
+  - Testes unitários em `scripts/test_runner.gd` cobrindo o ciclo de vida do `DifficultyManager`, leitura do JSON, presets, modificadores, reset e modo Web.
+
+---
+
 ## [1.3.0] - 2026-11-09
 
 ### Adicionado

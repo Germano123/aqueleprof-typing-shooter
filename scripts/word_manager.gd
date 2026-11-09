@@ -3,6 +3,8 @@ extends RefCounted
 
 # WordManager - Banco de palavras, pares de treino e dados de coloração/escala por fase
 
+static var difficulty_manager_ref = null
+
 # Pares Simétricos da Linha de Base (Fase 1)
 const PAIRS_HOME_ROW: Array[Dictionary] = [
 	{"left": "F", "right": "J", "name": "Indicadores Base (F-J)"},
@@ -176,202 +178,249 @@ static func get_visual_config_for_wave(wave: int) -> Dictionary:
 		return WAVE_VISUAL_CONFIG[wave]
 	return WAVE_VISUAL_CONFIG[22]
 
+static func _get_target_count(wave: int, default_count: int = 40) -> int:
+	if difficulty_manager_ref != null:
+		return difficulty_manager_ref.get_enemy_count(wave)
+	var tree = Engine.get_main_loop() as SceneTree
+	if tree != null and tree.root != null and tree.root.has_node("DifficultyManager"):
+		return tree.root.get_node("DifficultyManager").get_enemy_count(wave)
+	return default_count
+
+static func _get_target_speed(wave: int, default_speed: float = 32.0) -> float:
+	if difficulty_manager_ref != null:
+		return difficulty_manager_ref.get_fall_speed(wave)
+	var tree = Engine.get_main_loop() as SceneTree
+	if tree != null and tree.root != null and tree.root.has_node("DifficultyManager"):
+		return tree.root.get_node("DifficultyManager").get_fall_speed(wave)
+	return default_speed
+
 static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 	var queue: Array[Dictionary] = []
 	var cfg: Dictionary = get_visual_config_for_wave(wave)
 	var tint_col: Color = cfg["color"]
 	var scale_val: float = cfg["scale"]
+	var target_count: int = _get_target_count(wave, 40)
 	
 	match wave:
 		1:
-			# FASE 1: Indicadores Base (F - J) - 40 inimigos
-			for i in range(20):
+			# FASE 1: Indicadores Base (F - J)
+			var pairs_count: int = maxi(2, target_count / 2)
+			for i in range(pairs_count):
 				queue.append(_create_enemy_data("F", "E", "INDICADOR BASE (F)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("J", "D", "INDICADOR BASE (J)", tint_col, scale_val, -1.0, 1))
 				
 		2:
-			# FASE 2: Novos Inimigos: Indicadores Centro (G - H) - 40 inimigos
-			# 24 dos novos inimigos (G e H) + 16 de fixação (F e J)
-			for i in range(12):
+			# FASE 2: Novos Inimigos: Indicadores Centro (G - H)
+			# 60% novos inimigos + 40% fixação
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 2.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("G", "E", "NOVO: INDICADOR CENTRO (G)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("H", "D", "NOVO: INDICADOR CENTRO (H)", tint_col, scale_val, -1.0, 1))
-				if i < 8:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
 					
 		3:
-			# FASE 3: Novos Inimigos: Dedos Médios (D - K) - 40 inimigos
-			# 24 dos novos inimigos (D e K) + 16 de fixação anteriores (F, J, G, H)
-			for i in range(12):
+			# FASE 3: Novos Inimigos: Dedos Médios (D - K)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("D", "E", "NOVO: MÉDIO (D)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("K", "D", "NOVO: MÉDIO (K)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("G", "E", "FIXAÇÃO (G)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("H", "D", "FIXAÇÃO (H)", tint_col, scale_val, -1.0, 1))
 					
 		4:
-			# FASE 4: Novos Inimigos: Dedos Anelares (S - L) - 40 inimigos
-			# 24 dos novos inimigos (S e L) + 16 de fixação anteriores
-			for i in range(12):
+			# FASE 4: Novos Inimigos: Dedos Anelares (S - L)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("S", "E", "NOVO: ANELAR (S)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("L", "D", "NOVO: ANELAR (L)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("D", "E", "FIXAÇÃO (D)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("K", "D", "FIXAÇÃO (K)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
 					
 		5:
-			# FASE 5: Novos Inimigos: Dedos Mínimos (A - Ç) - 40 inimigos
-			# 24 dos novos inimigos (A e Ç) + 16 de fixação anteriores
-			for i in range(12):
+			# FASE 5: Novos Inimigos: Dedos Mínimos (A - Ç)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("A", "E", "NOVO: MÍNIMO (A)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("Ç", "D", "NOVO: MÍNIMO (Ç)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("S", "E", "FIXAÇÃO (S)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("L", "D", "FIXAÇÃO (L)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("D", "E", "FIXAÇÃO (D)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("K", "D", "FIXAÇÃO (K)", tint_col, scale_val, -1.0, 1))
 					
 		6:
-			# FASE 6: Desafio Master da Linha de Base (60 inimigos)
-			for round_idx in range(6):
+			# FASE 6: Desafio Master da Linha de Base (padrão 60 inimigos)
+			var rounds: int = maxi(1, target_count / 10)
+			for round_idx in range(rounds):
 				for pair in PAIRS_HOME_ROW:
 					queue.append(_create_enemy_data(pair["left"], "E", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(pair["right"], "D", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
 					
 		7:
-			# FASE 7: Linha Superior (R - U) - 40 inimigos
-			for i in range(20):
+			# FASE 7: Linha Superior (R - U)
+			var pairs_count: int = maxi(2, target_count / 2)
+			for i in range(pairs_count):
 				queue.append(_create_enemy_data("R", "E", "SUPERIOR (R)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("U", "D", "SUPERIOR (U)", tint_col, scale_val, -1.0, 1))
 				
 		8:
-			# FASE 8: Novos Inimigos: Linha Superior (T - Y) - 40 inimigos
-			for i in range(12):
+			# FASE 8: Novos Inimigos: Linha Superior (T - Y)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 2.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("T", "E", "NOVO: SUPERIOR (T)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("Y", "D", "NOVO: SUPERIOR (Y)", tint_col, scale_val, -1.0, 1))
-				if i < 8:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
 					
 		9:
-			# FASE 9: Novos Inimigos: Linha Superior (E - I) - 40 inimigos
-			for i in range(12):
+			# FASE 9: Novos Inimigos: Linha Superior (E - I)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("E", "E", "NOVO: SUPERIOR (E)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("I", "D", "NOVO: SUPERIOR (I)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("T", "E", "FIXAÇÃO (T)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("Y", "D", "FIXAÇÃO (Y)", tint_col, scale_val, -1.0, 1))
 					
 		10:
-			# FASE 10: Novos Inimigos: Linha Superior (W - O) - 40 inimigos
-			for i in range(12):
+			# FASE 10: Novos Inimigos: Linha Superior (W - O)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("W", "E", "NOVO: SUPERIOR (W)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("O", "D", "NOVO: SUPERIOR (O)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("E", "E", "FIXAÇÃO (E)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("I", "D", "FIXAÇÃO (I)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("R", "E", "FIXAÇÃO (R)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("U", "D", "FIXAÇÃO (U)", tint_col, scale_val, -1.0, 1))
 					
 		11:
-			# FASE 11: Novos Inimigos: Linha Superior (Q - P) - 40 inimigos
-			for i in range(12):
+			# FASE 11: Novos Inimigos: Linha Superior (Q - P)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("Q", "E", "NOVO: SUPERIOR (Q)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("P", "D", "NOVO: SUPERIOR (P)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("W", "E", "FIXAÇÃO (W)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("O", "D", "FIXAÇÃO (O)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("E", "E", "FIXAÇÃO (E)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("I", "D", "FIXAÇÃO (I)", tint_col, scale_val, -1.0, 1))
 					
 		12:
-			# FASE 12: Desafio Master da Linha Superior (60 inimigos)
-			for round_idx in range(6):
+			# FASE 12: Desafio Master da Linha Superior (padrão 60 inimigos)
+			var rounds: int = maxi(1, target_count / 10)
+			for round_idx in range(rounds):
 				for pair in PAIRS_UPPER_ROW:
 					queue.append(_create_enemy_data(pair["left"], "E", "LINHA SUPERIOR MASTER", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(pair["right"], "D", "LINHA SUPERIOR MASTER", tint_col, scale_val, -1.0, 1))
 					
 		13:
-			# FASE 13: Linha Inferior (B - N) - 40 inimigos
-			for i in range(20):
+			# FASE 13: Linha Inferior (B - N)
+			var pairs_count: int = maxi(2, target_count / 2)
+			for i in range(pairs_count):
 				queue.append(_create_enemy_data("B", "E", "INFERIOR (B)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("N", "D", "INFERIOR (N)", tint_col, scale_val, -1.0, 1))
 				
 		14:
-			# FASE 14: Novos Inimigos: Linha Inferior (V - M) - 40 inimigos
-			for i in range(12):
+			# FASE 14: Novos Inimigos: Linha Inferior (V - M)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 2.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("V", "E", "NOVO: INFERIOR (V)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data("M", "D", "NOVO: INFERIOR (M)", tint_col, scale_val, -1.0, 1))
-				if i < 8:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("B", "E", "FIXAÇÃO (B)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("N", "D", "FIXAÇÃO (N)", tint_col, scale_val, -1.0, 1))
 					
 		15:
-			# FASE 15: Novos Inimigos: Linha Inferior (C - ,) - 40 inimigos
-			for i in range(12):
+			# FASE 15: Novos Inimigos: Linha Inferior (C - ,)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("C", "E", "NOVO: INFERIOR (C)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data(",", "D", "NOVO: PONTUAÇÃO (,)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("V", "E", "FIXAÇÃO (V)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("M", "D", "FIXAÇÃO (M)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("B", "E", "FIXAÇÃO (B)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("N", "D", "FIXAÇÃO (N)", tint_col, scale_val, -1.0, 1))
 					
 		16:
-			# FASE 16: Novos Inimigos: Linha Inferior (X - .) - 40 inimigos
-			for i in range(12):
+			# FASE 16: Novos Inimigos: Linha Inferior (X - .)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("X", "E", "NOVO: INFERIOR (X)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data(".", "D", "NOVO: PONTUAÇÃO (.)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("C", "E", "FIXAÇÃO (C)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(",", "D", "FIXAÇÃO (,)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("V", "E", "FIXAÇÃO (V)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("M", "D", "FIXAÇÃO (M)", tint_col, scale_val, -1.0, 1))
 					
 		17:
-			# FASE 17: Novos Inimigos: Linha Inferior (Z - ;) - 40 inimigos
-			for i in range(12):
+			# FASE 17: Novos Inimigos: Linha Inferior (Z - ;)
+			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
+			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
+			for i in range(new_loops):
 				queue.append(_create_enemy_data("Z", "E", "NOVO: INFERIOR (Z)", tint_col, scale_val, -1.0, 1))
 				queue.append(_create_enemy_data(";", "D", "NOVO: PONTUAÇÃO (;)", tint_col, scale_val, -1.0, 1))
-				if i < 4:
+				if i < fix_loops:
 					queue.append(_create_enemy_data("X", "E", "FIXAÇÃO (X)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(".", "D", "FIXAÇÃO (.)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data("C", "E", "FIXAÇÃO (C)", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(",", "D", "FIXAÇÃO (,)", tint_col, scale_val, -1.0, 1))
 					
 		18:
-			# FASE 18: Desafio Master da Linha Inferior (60 inimigos)
-			for round_idx in range(6):
+			# FASE 18: Desafio Master da Linha Inferior (padrão 60 inimigos)
+			var rounds: int = maxi(1, target_count / 10)
+			for round_idx in range(rounds):
 				for pair in PAIRS_LOWER_ROW:
 					queue.append(_create_enemy_data(pair["left"], "E", "LINHA INFERIOR MASTER", tint_col, scale_val, -1.0, 1))
 					queue.append(_create_enemy_data(pair["right"], "D", "LINHA INFERIOR MASTER", tint_col, scale_val, -1.0, 1))
 					
 		19:
-			# FASE 19: 25 Cruzadores Pesados 2-HP (Carmesim) a 24.0 px/s
-			for i in range(25):
+			# FASE 19: Cruzadores Pesados 2-HP (Carmesim)
+			var spd_19: float = _get_target_speed(19, 24.0)
+			for i in range(target_count):
 				var word: String = WORDS_HEAVY_2CHAR[i % WORDS_HEAVY_2CHAR.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
-				queue.append(_create_enemy_data(word, hand, "CRUZADOR 2-HP", tint_col, 1.35, 24.0))
+				queue.append(_create_enemy_data(word, hand, "CRUZADOR 2-HP", tint_col, 1.35, spd_19))
 				
 		20:
-			# FASE 20: 25 Cruzadores Pesados 3-HP (Carmesim) ainda mais lentos a 19.0 px/s
-			for i in range(25):
+			# FASE 20: Cruzadores Pesados 3-HP (Carmesim)
+			var spd_20: float = _get_target_speed(20, 19.0)
+			for i in range(target_count):
 				var word: String = WORDS_HEAVY_3CHAR[i % WORDS_HEAVY_3CHAR.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
-				queue.append(_create_enemy_data(word, hand, "CRUZADOR 3-HP", tint_col, 1.45, 19.0))
+				queue.append(_create_enemy_data(word, hand, "CRUZADOR 3-HP", tint_col, 1.45, spd_20))
 				
 		21:
-			# FASE 21: 18 palavras de Alcance Difícil (Púrpura) - quantidade reduzida e mais lentos (19.0 px/s)
-			for i in range(18):
+			# FASE 21: palavras de Alcance Difícil (Púrpura)
+			var spd_21: float = _get_target_speed(21, 19.0)
+			for i in range(target_count):
 				var word: String = WORDS_DIFFICULT_STRETCH[i % WORDS_DIFFICULT_STRETCH.size()]
 				var hand: String = get_hand_for_key(word.substr(0, 1))
-				queue.append(_create_enemy_data(word, hand, "ALCANCE", tint_col, scale_val, 19.0))
+				queue.append(_create_enemy_data(word, hand, "ALCANCE", tint_col, scale_val, spd_21))
 				
 		_:
 			# FASE 22+: Horda Mista Cósmica - Spawns misturados entre todas as opções anteriores
@@ -382,7 +431,8 @@ static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 			var col_stretch: Color = WAVE_VISUAL_CONFIG[21]["color"]
 			var col_cosmic: Color = WAVE_VISUAL_CONFIG[22]["color"]
 			
-			var count_per_type: int = 5 + (wave - 22)
+			var spd_mixed: float = _get_target_speed(wave, 22.0)
+			var count_per_type: int = maxi(1, int(round(float(target_count) / 7.0)))
 			
 			# 1. Linha de Base
 			for i in range(count_per_type):

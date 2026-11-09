@@ -94,6 +94,24 @@ O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 6
 
 ---
 
+## ⚙️ Sistema de Balanceamento e Dificuldade (JSON & Multiplataforma)
+
+O jogo oferece um sistema de balanceamento dinâmico e flexível:
+
+- **Arquivo `difficulty_balance.json` na raiz do projeto**:
+  - Permite configurar velocidade de queda (`velocidade_queda` em px/s), quantidade de tropas (`quantidade_inimigos`) e cadência de surgimento (`intervalo_spawn` em segundos) para cada uma das 22+ fases, além de multiplicadores globais e presets (`facil`, `normal`, `dificil`).
+  - Totalmente legível e editável em linguagem natural por professores e game designers.
+- **Gerenciador Global `DifficultyManager` (Autoload)**:
+  - **Versão Desktop**: Carrega o JSON da raiz ou os overrides em `user://difficulty_balance.json`, salvando alterações feitas pelo jogador diretamente no arquivo local.
+  - **Versão Web (HTML5/Wasm)**: Opera em modo leitura/sessão (`is_web = true`), aplicando os ajustes apenas na memória da sessão atual e resetando aos valores padrão ao recarregar a página sem necessidade de persistência em disco.
+- **Tela de Configurações no Menu Inicial (`MainMenu`)**:
+  - Modal com seleção de fase individual ou ajuste global de multiplicadores.
+  - Presets instantâneos (*Fácil 0.8x*, *Normal 1.0x*, *Difícil 1.25x*).
+  - Sliders com ajuste em tempo real de velocidade (10 a 80 px/s), quantidade de tropas (6 a 100) e intervalo de spawn (0.4s a 3.0s).
+  - Botão de restauração rápida para os padrões de fábrica.
+
+---
+
 ## ⚡ Dificuldade Adaptativa (DDA - Dynamic Difficulty Adjustment)
 
 O jogo monitora em tempo real a constância e velocidade do jogador:
@@ -112,9 +130,10 @@ Ao esgotar os escudos, o estado de Game Over aciona a parada imediata e congelam
 
 ```
 typing-shooter/
+├── difficulty_balance.json     # Arquivo raiz de balanceamento (velocidade e tropas)
 ├── project.godot               # Configurações do projeto e Autoloads
 ├── scenes/
-│   ├── main_menu.tscn          # Menu principal e instruções
+│   ├── main_menu.tscn          # Menu principal, modal de configurações e instruções
 │   ├── game.tscn               # Arena de combate e split-screen
 │   ├── player.tscn             # Nave espacial com HUD de Rank
 │   ├── enemy_word.tscn         # Inimigo pod com barra de vida e tags
@@ -124,6 +143,7 @@ typing-shooter/
 │   ├── floating_text.tscn      # Feedback flutuante de pontos e combo
 │   └── hud.tscn                # HUD superior, banners e modal de KPIs
 ├── scripts/
+│   ├── difficulty_manager.gd   # Gerenciador de balanceamento JSON, presets e web
 │   ├── word_manager.gd         # Banco de palavras, 10 colunas e filas pedagógicas
 │   ├── game.gd                 # Loop do jogo, guias de colunas e DDA
 │   ├── typing_metrics.gd       # Motor de cadência, DDA, KPIs e telemetria
