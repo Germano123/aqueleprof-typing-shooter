@@ -6,6 +6,33 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [0.1.0] - 2026-11-10 - Versão Estável (Aquele Professor)
+
+Primeiro lançamento estável oficial do **Typing Shooter** preparado para integração e disponibilização no website da marca **Aquele Professor**.
+
+### Destaques da Versão:
+- **🖐️ Mapeamento Espacial em 10 Colunas (Touch Typing)**:
+  - 10 faixas verticais fixas de 72px com separador central luminoso entre a mão esquerda e direita.
+  - Alinhamento motor estrito dedo-a-tecla para construção acelerada de memória muscular.
+- **📚 Matriz Pedagógica Completa com 22+ Fases**:
+  - Bloco 1 (Fases 1 a 6): Linha de Base (`F-J`, `G-H`, `D-K`, `S-L`, `A-Ç` e Desafio Master).
+  - Bloco 2 (Fases 7 a 12): Linha Superior (`R-U`, `T-Y`, `E-I`, `W-O`, `Q-P` e Desafio Master).
+  - Bloco 3 (Fases 13 a 18): Linha Inferior com pontuação (`B-N`, `V-M`, `C-,`, `X-.`, `Z-;` e Desafio Master).
+  - Bloco 4 (Fases 19 a 22+): Cruzadores blindados 2-HP e 3-HP (meta de cadência de 150ms), termos de alcance difícil e Horda Cósmica mista infinita.
+- **⚡ DDA (Dificuldade Adaptativa) & Cockpit de Telemetria**:
+  - Ajuste dinâmico de taxa de surgimento e quantidade de invasores baseado na sequência perfeita de digitação (Modos Neutro, Acelerado, Frenesi e Recuperação).
+  - Painel tático lateral com teclado virtual interativo, métricas de WPM, CPM, % de acerto, equilíbrio entre mãos e computador de bordo com mensagens situacionais.
+- **⚙️ Balanceamento Dinâmico & Suporte Web Inteligente**:
+  - Arquivo `difficulty_balance.json` na raiz para fácil alteração de velocidades e tropas em linguagem natural.
+  - Tela de configurações no menu inicial com sliders, seletor de fases e presets rápidos (*Fácil*, *Normal*, *Difícil*).
+  - Suporte nativo à versão Web (HTML5/WASM): opera em modo transitório na memória da sessão, resetando automaticamente ao recarregar a página sem erros de I/O em disco.
+- **🔊 Áudio 100% Procedural**:
+  - Efeitos sonoros de laser, impactos, erros, combos e rádio gerados por código em tempo de execução, garantindo um pacote ultraleve sem dependências de arquivos de áudio externos para carregamento instantâneo no navegador.
+- **🧪 100% Coberto por Testes Automatizados**:
+  - 12 suites de testes integrados e validados via Godot Engine headless CLI.
+
+---
+
 ## [1.4.0] - 2026-11-09
 
 ### Adicionado
