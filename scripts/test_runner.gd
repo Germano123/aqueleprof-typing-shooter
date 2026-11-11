@@ -674,7 +674,42 @@ func test_boss_fight_mechanics() -> void:
 	assert(r_cnt == 20, "Fase 6 deve conter 20 alvos associados ao canhão direito (obtido: %d)" % r_cnt)
 	assert(c_cnt == 20, "Fase 6 deve conter 20 alvos associados ao núcleo (obtido: %d)" % c_cnt)
 	
-	print("  ✓ Mecânicas completas de batalha contra chefe validadas com sucesso.")
+	# 4. Testar Fase 3 com Primeiro Chefe ao Final
+	var q3: Array[Dictionary] = WordManager.generate_wave_queue(3)
+	assert(q3.size() == 40, "Fase 3 deve ter exatamente 40 alvos")
+	var q3_part1_count: int = 0
+	var q3_part2_boss_count: int = 0
+	for i in range(q3.size()):
+		var it: Dictionary = q3[i]
+		if i < 20:
+			assert(it.get("section_id", 1) == 1, "Primeira metade da Fase 3 deve ser seção 1")
+			assert(it.get("cannon_side", "") == "", "Primeira metade não tem lado de canhão")
+			q3_part1_count += 1
+		else:
+			assert(it.get("section_id", 1) == 2, "Segunda metade da Fase 3 (final do level) deve ser seção 2 (Chefe)")
+			assert(it.get("cannon_side", "") != "", "Segunda metade deve ter artilharia de canhão")
+			q3_part2_boss_count += 1
+	assert(q3_part1_count == 20, "Primeira metade da Fase 3 deve ter 20 alvos pedagógicos")
+	assert(q3_part2_boss_count == 20, "Segunda metade da Fase 3 (ao final do level 3) deve ter 20 alvos do Chefe")
+	
+	# Testar Fase 3 em modo Chefe Direto
+	var q3_direct: Array[Dictionary] = WordManager.generate_wave_queue(3, true)
+	assert(q3_direct.size() == 20, "Fase 3 Chefe Direto deve ter 20 alvos")
+	assert(q3_direct[0].get("cannon_side", "") != "", "Chefe direto deve iniciar com artilharia")
+	
+	# 5. Testar DebugLevelSelector (Painel F1)
+	var selector_scene: PackedScene = load("res://scenes/debug_level_selector.tscn")
+	assert(selector_scene != null, "debug_level_selector.tscn deve existir")
+	var selector: Control = selector_scene.instantiate()
+	root.add_child(selector)
+	assert(selector.is_open() == false, "Seletor de debug deve iniciar fechado")
+	selector.open()
+	assert(selector.is_open() == true, "open() deve abrir o painel de debug")
+	selector.close()
+	assert(selector.is_open() == false, "close() deve fechar o painel de debug")
+	selector.queue_free()
+	
+	print("  ✓ Mecânicas completas de batalha contra chefe e seletor F1 validadas com sucesso.")
 
 
 

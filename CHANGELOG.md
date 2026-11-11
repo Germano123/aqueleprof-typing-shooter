@@ -6,6 +6,21 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [0.3.0] - 2026-11-11 - Painel de Seleção de Fases (Debug F1) & Chefe ao Final do Level 3
+
+### Adicionado
+- **🛠️ Atalho de Modo Debug com Seletor de Fases (`F1`)**:
+  - Modal interativo `DebugLevelSelector` (`scenes/debug_level_selector.tscn` e `scripts/debug_level_selector.gd`) acessível a qualquer momento com a tecla `F1`.
+  - Atalhos destacados para testar o primeiro chefe: `▶ FASE 3 (CHEFE AO FINAL)` e `⚡ FASE 3: CHEFE DIRETO`.
+  - Grade com botões de acesso direto a todas as fases categorizadas por blocos pedagógicos (Fases 1 a 22+).
+  - Campo numérico SpinBox para transição instantânea para qualquer fase customizada.
+  - Pausa inteligente da entrada de digitação do jogo enquanto o modal estiver aberto, fechando com `F1` ou `ESC`.
+- **👾 Primeiro Chefe ao Final do Level 3**:
+  - A Fase 3 foi reestruturada: a primeira metade (20 alvos) trabalha a assimilação dos dedos médios (`D` e `K`) com fixação, e a segunda metade culmina com o alarme de sirene, descida do **Encouraçado Ômega**, mísseis teleguiados e tropas de artilharia.
+  - Reposição automática de alvos de artilharia caso a fila se esgote enquanto o chefe ainda estiver ativo, garantindo fluxo ininterrupto de combate.
+
+---
+
 ## [0.2.0] - 2026-11-10 - Batalha de Chefe: Encouraçado Ômega & Esquiva com Shift
 
 Nova mecânica tática de combate contra chefes, introduzindo alvos divididos em pontos vitais, ataques de artilharia sincronizados e o primeiro conceito de esquiva/interceptação via tecla Shift.

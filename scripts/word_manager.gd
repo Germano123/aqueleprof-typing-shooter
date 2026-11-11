@@ -194,7 +194,7 @@ static func _get_target_speed(wave: int, default_speed: float = 32.0) -> float:
 		return tree.root.get_node("DifficultyManager").get_fall_speed(wave)
 	return default_speed
 
-static func generate_wave_queue(wave: int) -> Array[Dictionary]:
+static func generate_wave_queue(wave: int, direct_boss: bool = false) -> Array[Dictionary]:
 	var queue: Array[Dictionary] = []
 	var cfg: Dictionary = get_visual_config_for_wave(wave)
 	var tint_col: Color = cfg["color"]
@@ -222,17 +222,76 @@ static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
 					
 		3:
-			# FASE 3: Novos Inimigos: Dedos Médios (D - K)
-			var new_loops: int = maxi(1, int(round(target_count * 0.6 / 2.0)))
-			var fix_loops: int = maxi(1, int(round(target_count * 0.4 / 4.0)))
-			for i in range(new_loops):
-				queue.append(_create_enemy_data("D", "E", "NOVO: MÉDIO (D)", tint_col, scale_val, -1.0, 1))
-				queue.append(_create_enemy_data("K", "D", "NOVO: MÉDIO (K)", tint_col, scale_val, -1.0, 1))
-				if i < fix_loops:
-					queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
-					queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
-					queue.append(_create_enemy_data("G", "E", "FIXAÇÃO (G)", tint_col, scale_val, -1.0, 1))
-					queue.append(_create_enemy_data("H", "D", "FIXAÇÃO (H)", tint_col, scale_val, -1.0, 1))
+			# FASE 3: Novos Inimigos: Dedos Médios (D - K) com Primeiro Chefe Encouraçado Ômega ao Final
+			if direct_boss:
+				var left_count: int = 7
+				var right_count: int = 7
+				var core_count: int = 6
+				
+				var temp_left: Array[Dictionary] = []
+				for i in range(left_count):
+					var k: String = ["D", "F", "G", "D", "F", "D", "G"][i]
+					temp_left.append(_create_enemy_data(k, "E", "CANHÃO ESQ", Color(0.3, 0.85, 1.0), scale_val, -1.0, 2, "left"))
+				var temp_right: Array[Dictionary] = []
+				for i in range(right_count):
+					var k: String = ["K", "J", "H", "K", "J", "K", "H"][i]
+					temp_right.append(_create_enemy_data(k, "D", "CANHÃO DIR", Color(0.9, 0.4, 1.0), scale_val, -1.0, 2, "right"))
+				var temp_core: Array[Dictionary] = []
+				for i in range(core_count):
+					var k: String = "D" if i % 2 == 0 else "K"
+					var h: String = "E" if i % 2 == 0 else "D"
+					temp_core.append(_create_enemy_data(k, h, "NÚCLEO CENTRAL", Color(1.0, 0.8, 0.2), scale_val, -1.0, 2, "core"))
+				var l_i: int = 0
+				var r_i: int = 0
+				while l_i < left_count or r_i < right_count:
+					if l_i < left_count:
+						queue.append(temp_left[l_i])
+						l_i += 1
+					if r_i < right_count:
+						queue.append(temp_right[r_i])
+						r_i += 1
+				for c_item in temp_core:
+					queue.append(c_item)
+			else:
+				# Seção 1 (Início do Level 3): 20 alvos introduzindo D e K + fixação F, J, G, H
+				for i in range(6):
+					queue.append(_create_enemy_data("D", "E", "NOVO: MÉDIO (D)", tint_col, scale_val, -1.0, 1))
+					queue.append(_create_enemy_data("K", "D", "NOVO: MÉDIO (K)", tint_col, scale_val, -1.0, 1))
+					if i < 2:
+						queue.append(_create_enemy_data("F", "E", "FIXAÇÃO (F)", tint_col, scale_val, -1.0, 1))
+						queue.append(_create_enemy_data("J", "D", "FIXAÇÃO (J)", tint_col, scale_val, -1.0, 1))
+						queue.append(_create_enemy_data("G", "E", "FIXAÇÃO (G)", tint_col, scale_val, -1.0, 1))
+						queue.append(_create_enemy_data("H", "D", "FIXAÇÃO (H)", tint_col, scale_val, -1.0, 1))
+				
+				# Seção 2 (Ao final do Level 3): Primeiro Chefe - Encouraçado Ômega (20 alvos de artilharia)
+				var left_count: int = 7
+				var right_count: int = 7
+				var core_count: int = 6
+				
+				var temp_left: Array[Dictionary] = []
+				for i in range(left_count):
+					var k: String = ["D", "F", "G", "D", "F", "D", "G"][i]
+					temp_left.append(_create_enemy_data(k, "E", "CANHÃO ESQ", Color(0.3, 0.85, 1.0), scale_val, -1.0, 2, "left"))
+				var temp_right: Array[Dictionary] = []
+				for i in range(right_count):
+					var k: String = ["K", "J", "H", "K", "J", "K", "H"][i]
+					temp_right.append(_create_enemy_data(k, "D", "CANHÃO DIR", Color(0.9, 0.4, 1.0), scale_val, -1.0, 2, "right"))
+				var temp_core: Array[Dictionary] = []
+				for i in range(core_count):
+					var k: String = "D" if i % 2 == 0 else "K"
+					var h: String = "E" if i % 2 == 0 else "D"
+					temp_core.append(_create_enemy_data(k, h, "NÚCLEO CENTRAL", Color(1.0, 0.8, 0.2), scale_val, -1.0, 2, "core"))
+				var l_i: int = 0
+				var r_i: int = 0
+				while l_i < left_count or r_i < right_count:
+					if l_i < left_count:
+						queue.append(temp_left[l_i])
+						l_i += 1
+					if r_i < right_count:
+						queue.append(temp_right[r_i])
+						r_i += 1
+				for c_item in temp_core:
+					queue.append(c_item)
 					
 		4:
 			# FASE 4: Novos Inimigos: Dedos Anelares (S - L)
@@ -545,3 +604,18 @@ static func get_word_for_wave(wave: int = 1, _exclude_initials: Array[String] = 
 static func get_random_word(wave: int = 1, _exclude_initials: Array[String] = []) -> String:
 	var res: Dictionary = get_word_for_wave(wave)
 	return res["word"]
+
+static func generate_boss_artillery_item(wave: int, side: String) -> Dictionary:
+	var cfg: Dictionary = get_visual_config_for_wave(wave)
+	var scale_val: float = cfg.get("scale", 1.0)
+	match side.to_lower():
+		"left", "canhão esquerdo", "esq":
+			var key_l: String = ["D", "F", "G"].pick_random() if wave <= 3 else ["F", "G", "D", "S", "A"].pick_random()
+			return _create_enemy_data(key_l, "E", "CANHÃO ESQ", Color(0.3, 0.85, 1.0), scale_val, -1.0, 2, "left")
+		"right", "canhão direito", "dir":
+			var key_r: String = ["K", "J", "H"].pick_random() if wave <= 3 else ["J", "H", "K", "L", "Ç"].pick_random()
+			return _create_enemy_data(key_r, "D", "CANHÃO DIR", Color(0.9, 0.4, 1.0), scale_val, -1.0, 2, "right")
+		_:
+			var key_c: String = "D" if randf() < 0.5 else "K"
+			var hand_c: String = "E" if key_c == "D" else "D"
+			return _create_enemy_data(key_c, hand_c, "NÚCLEO CENTRAL", Color(1.0, 0.8, 0.2), scale_val, -1.0, 2, "core")

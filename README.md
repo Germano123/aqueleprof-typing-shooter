@@ -58,14 +58,14 @@ O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 6
   - Assimilação dos pontos de repouso dos indicadores com as marcações táteis do teclado.
 - **Fase 2: Novos Indicadores Centro (`G` - `H`)** (40 inimigos: 24 G/H + 16 F/J)
   - Deslocamento lateral dos indicadores e retorno imediato à base.
-- **Fase 3: Novos Dedos Médios (`D` - `K`)** (40 inimigos: 24 D/K + 16 fixação)
-  - Ativação dos dedos médios com reforço dos indicadores já aprendidos.
+- **Fase 3: Novos Dedos Médios (`D` - `K`) & Primeiro Chefe ao Final** (40 inimigos: 20 D/K + 20 artilharia do Chefe)
+  - Ativação dos dedos médios e culminação épica ao final do setor com a descida do **Encouraçado Ômega**, artilharia tática e esquiva de mísseis com `SHIFT`.
 - **Fase 4: Novos Dedos Anelares (`S` - `L`)** (40 inimigos: 24 S/L + 16 fixação)
   - Desenvolvimento da independência motora dos dedos anelares.
 - **Fase 5: Novos Dedos Mínimos (`A` - `Ç`)** (40 inimigos: 24 A/Ç + 16 fixação)
   - Domínio das extremidades da linha de base pelos dedos mínimos.
-- **Fase 6: Batalha de Chefe - Encouraçado Ômega** (60 inimigos de artilharia | Ouro Ciano)
-  - Primeira batalha épica contra chefes com 3 pontos vitais (Canhões Laterais de 5 HP e Núcleo Central de 5 HP blindado por escudo de força) e introdução à esquiva de mísseis teleguiados via `SHIFT + número`.
+- **Fase 6: Desafio Master da Linha de Base** (60 inimigos | Ouro Ciano)
+  - Teste integrativo com todos os pares da linha de base misturados em alta velocidade.
 
 ### ⬆️ Bloco 2: Linha Superior (Top Row - Fases 7 a 12)
 - **Fase 7: Indicadores Superior (`R` - `U`)** (40 inimigos | Verde Esmeralda)
@@ -97,7 +97,7 @@ O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 6
 
 ## 👾 Sistema de Combate contra Chefes & Esquiva Tática
 
-A partir da **Fase 6**, o jogo introduz confrontos épicos contra naves capitais com mecânicas táticas avançadas:
+O primeiro grande confronto ocorre **ao final da Fase 3** contra a nave capital **Encouraçado Ômega**:
 
 ### 🛡️ O Encouraçado Ômega (3 Pontos Vitais)
 1. **Canhão Esquerdo (5 HP)**: Localizado na bateria bombordo, vulnerável a palavras completadas na artilharia esquerda (`CANHÃO ESQ`).
@@ -114,6 +114,19 @@ A partir da **Fase 6**, o jogo introduz confrontos épicos contra naves capitais
 - Cada míssil projeta um badge de alerta com um caractere especial obtido pela fileira numérica superior combinada à tecla `Shift`:
   `!` (`SHIFT + 1`), `@` (`SHIFT + 2`), `#` (`SHIFT + 3`), `$` (`SHIFT + 4`), `%` (`SHIFT + 5`), `¨` (`SHIFT + 6`), `&` (`SHIFT + 7`), `*` (`SHIFT + 8`), `(` (`SHIFT + 9`), `)` (`SHIFT + 0`).
 - Ao pressionar `Shift` e teclar o símbolo correspondente, a nave dispara imediatamente uma contramedida interceptadora que explode o míssil em pleno ar, concedendo **+250 pontos de esquiva** e protegendo os escudos da nave.
+
+---
+
+## 🛠️ Modo Debug e Seletor de Fases (Atalho F1)
+
+Para acelerar o fluxo de testes e validação por designers e educadores:
+- **Atalho `F1`**: Pressionar `F1` a qualquer momento abre o painel modal **🛠️ MODO DEBUG: SELETOR DE FASES**.
+- **Atalhos Rápidos de Chefe**:
+  - `▶ FASE 3 (CHEFE AO FINAL)`: Inicia a Fase 3 com a introdução dos dedos médios e culmina na batalha contra o chefe.
+  - `⚡ FASE 3: CHEFE DIRETO`: Inicia instantaneamente o combate contra o Encouraçado Ômega sem necessidade de passar pelos minions prévios.
+- **Grade Completa de Fases**: Botões categorizados pelos 4 blocos pedagógicos (Fases 1 a 22+).
+- **Entrada Manual de Fase**: Seletor numérico para pular para qualquer fase customizada.
+- Pressionar `F1` novamente ou `ESC` fecha o painel de debug instantaneamente.
 
 ---
 

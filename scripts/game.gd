@@ -104,6 +104,7 @@ func _setup_connections() -> void:
 	hud.restart_requested.connect(start_game)
 	hud.menu_requested.connect(_on_menu_requested)
 	hud.next_wave_requested.connect(_on_next_wave_requested)
+	hud.debug_wave_selected.connect(_on_debug_wave_selected)
 	
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	
@@ -133,11 +134,11 @@ func start_game() -> void:
 	hud.game_over_panel.visible = false
 	hud.kpi_modal.visible = false
 	_update_target_panel()
-	typing_panel.add_log("💡 MODO DEBUG: F1 PARA AVANÇAR DE ONDA")
+	typing_panel.add_log("💡 MODO DEBUG: PRESSIONE F1 PARA SELETOR DE FASES")
 	
 	_start_wave_sequence(current_wave)
 
-func _start_wave_sequence(wave_num: int) -> void:
+func _start_wave_sequence(wave_num: int, direct_boss: bool = false) -> void:
 	current_wave_transition_id += 1
 	current_wave = wave_num
 	is_wave_transition = false
@@ -156,7 +157,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 		current_boss = null
 	is_boss_wave = false
 	
-	wave_queue = WordManager.generate_wave_queue(current_wave)
+	wave_queue = WordManager.generate_wave_queue(current_wave, direct_boss)
 	total_wave_enemies = wave_queue.size()
 	defeated_wave_enemies = 0
 	wave_enemies_remaining = total_wave_enemies
@@ -165,16 +166,9 @@ func _start_wave_sequence(wave_num: int) -> void:
 	typing_panel.update_wave_progress(0, total_wave_enemies, current_wave)
 	typing_metrics.start_wave(current_wave)
 	
-	# Se for Fase 6, inicializar a batalha de chefe
-	if current_wave == 6 and boss_scene:
-		is_boss_wave = true
-		current_boss = boss_scene.instantiate() as BossDreadnought
-		current_boss.position = Vector2(410, 100)
-		add_child(current_boss)
-		current_boss.cannon_destroyed.connect(_on_boss_cannon_destroyed)
-		current_boss.shield_collapsed.connect(_on_boss_shield_collapsed)
-		current_boss.boss_defeated.connect(_on_boss_defeated)
-		SoundManager.play_boss_alert()
+	# Se for Fase 6 ou Fase 3 em modo direto, inicializar a batalha de chefe imediatamente
+	if (current_wave == 6 or (current_wave == 3 and direct_boss)) and boss_scene:
+		_spawn_boss()
 	
 	var tree := get_tree()
 	if tree and tree.root and tree.root.has_node("DifficultyManager"):
@@ -213,7 +207,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 	match current_wave:
 		1: banner_text = "Fase 1: Indicadores Base (F - J)"
 		2: banner_text = "Fase 2: Novos Inimigos: Indicadores Centro (G - H)"
-		3: banner_text = "Fase 3: Novos Inimigos: Dedos Médios (D - K)"
+		3: banner_text = "Fase 3: Novos Inimigos: Dedos Médios (D - K) [Chefe ao Final]"
 		4: banner_text = "Fase 4: Novos Inimigos: Dedos Anelares (S - L)"
 		5: banner_text = "Fase 5: Novos Inimigos: Dedos Mínimos (A - Ç)"
 		6: banner_text = "Fase 6: Batalha de Chefe - Encouraçado Ômega"
@@ -243,7 +237,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 		2:
 			typing_panel.set_computer_message("Novos invasores detectados: estenda os indicadores para G e H!", true)
 		3:
-			typing_panel.set_computer_message("Invasores nas colunas dos dedos médios: prepare D e K!", true)
+			typing_panel.set_computer_message("Invasores nas colunas dos dedos médios (D e K). Alerta: nave capital inimiga detectada ao final do setor!", true)
 		4:
 			typing_panel.set_computer_message("Alvos nos dedos anelares: posicione S e L!", true)
 		5:
@@ -306,11 +300,20 @@ func _input(event: InputEvent) -> void:
 	if key_event and key_event.pressed and not key_event.echo:
 		if key_event.keycode == KEY_F1:
 			get_viewport().set_input_as_handled()
-			_debug_advance_next_wave()
+			if hud:
+				hud.toggle_debug_panel()
+		elif key_event.keycode == KEY_ESCAPE and hud and hud.is_debug_panel_open():
+			get_viewport().set_input_as_handled()
+			hud.close_debug_panel()
 
-func _debug_advance_next_wave() -> void:
+func _on_debug_wave_selected(wave_num: int, direct_boss: bool) -> void:
+	_warp_to_wave(wave_num, direct_boss)
+
+func _warp_to_wave(wave_num: int, direct_boss: bool = false) -> void:
 	if is_game_over:
-		return
+		is_game_over = false
+		if hud and hud.game_over_panel:
+			hud.game_over_panel.visible = false
 		
 	# Limpar todos os inimigos da arena imediatamente
 	for child in word_container.get_children():
@@ -320,6 +323,17 @@ func _debug_advance_next_wave() -> void:
 	for child in projectile_container.get_children():
 		child.queue_free()
 		
+	for m in active_missiles:
+		if is_instance_valid(m):
+			m.queue_free()
+	active_missiles.clear()
+	missile_spawn_timer = 0.0
+	
+	if is_instance_valid(current_boss):
+		current_boss.queue_free()
+		current_boss = null
+	is_boss_wave = false
+	
 	wave_queue.clear()
 	spawn_timer.stop()
 	if is_instance_valid(targeted_enemy):
@@ -331,13 +345,15 @@ func _debug_advance_next_wave() -> void:
 	if hud and is_instance_valid(hud.kpi_modal):
 		hud.kpi_modal.visible = false
 		
-	var next_wave: int = current_wave + 1
-	typing_panel.add_log("⚡ [DEBUG F1] AVANÇANDO PARA A FASE %d" % next_wave)
+	typing_panel.add_log("⚡ [DEBUG F1] SELEÇÃO: INICIANDO FASE %d%s" % [wave_num, " (CHEFE)" if direct_boss else ""])
 	SoundManager.play_laser(1.2)
-	_start_wave_sequence(next_wave)
+	_start_wave_sequence(wave_num, direct_boss)
+
+func _debug_advance_next_wave() -> void:
+	_warp_to_wave(current_wave + 1, false)
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if is_game_over or is_wave_transition:
+	if is_game_over or is_wave_transition or (hud and hud.is_debug_panel_open()):
 		return
 		
 	var key_event: InputEventKey = event as InputEventKey
@@ -513,14 +529,28 @@ func _spawn_enemy(offset_y: float = 0.0) -> void:
 		return
 		
 	if wave_queue.is_empty():
-		spawn_timer.stop()
-		return
+		# Se estivermos na batalha de chefe e o chefe ainda estiver vivo, repor munição de artilharia
+		if is_boss_wave and is_instance_valid(current_boss) and not current_boss.is_defeated:
+			var side_needed: String = "core"
+			if current_boss.is_left_cannon_alive():
+				side_needed = "left"
+			elif current_boss.is_right_cannon_alive():
+				side_needed = "right"
+			var fallback_item: Dictionary = WordManager.generate_boss_artillery_item(current_wave, side_needed)
+			wave_queue.append(fallback_item)
+		else:
+			spawn_timer.stop()
+			return
 		
 	var item: Dictionary = wave_queue.pop_front()
 	var sec_id: int = item.get("section_id", 1)
 	if sec_id != current_section_id:
 		current_section_id = sec_id
 		_on_section_transition(sec_id)
+		
+	# Se for Fase 3 e chegou na seção do chefe (ao final do level 3), inicializar o chefe
+	if current_wave == 3 and sec_id == 2 and not is_boss_wave and not is_instance_valid(current_boss):
+		_spawn_boss()
 		
 	var word_str: String = item["word"]
 	var word_tag: String = item["tag"]
@@ -550,10 +580,17 @@ func _on_section_transition(new_sec_id: int) -> void:
 	if typing_metrics:
 		typing_metrics.reset_flow_rhythm()
 	spawn_timer.wait_time = maxf(0.5, base_spawn_interval * 1.0)
-	hud.show_wave_banner("Novos inimigos foram encontrados!")
-	typing_panel.set_computer_message("Alerta! Novos inimigos foram encontrados!", true)
-	typing_panel.add_log("🔔 SEÇÃO %d: Novos inimigos foram encontrados!" % new_sec_id)
-	SoundManager.play_comms()
+	
+	if current_wave == 3 and new_sec_id == 2:
+		hud.show_wave_banner("ALERTA DE CHEFE: ENCOURAÇADO ÔMEGA!")
+		typing_panel.set_computer_message("ALERTA MÁXIMO! O Encouraçado Ômega aproximou-se ao final do setor! Destrua os canhões e esquive dos mísseis!", true)
+		typing_panel.add_log("🚨 SEÇÃO 2: ENCOURAÇADO ÔMEGA DETECTADO AO FINAL DO LEVEL 3!")
+		SoundManager.play_boss_alert()
+	else:
+		hud.show_wave_banner("Novos inimigos foram encontrados!")
+		typing_panel.set_computer_message("Alerta! Novos inimigos foram encontrados!", true)
+		typing_panel.add_log("🔔 SEÇÃO %d: Novos inimigos foram encontrados!" % new_sec_id)
+		SoundManager.play_comms()
 
 func _get_active_enemy_count() -> int:
 	var count: int = 0
@@ -708,6 +745,19 @@ func _on_menu_requested() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 # ----------------- BATALHA CONTRA CHEFES E MÍSSEIS TELEGUIADOS -----------------
+
+func _spawn_boss() -> void:
+	if not boss_scene or is_instance_valid(current_boss):
+		return
+	is_boss_wave = true
+	current_boss = boss_scene.instantiate() as BossDreadnought
+	current_boss.position = Vector2(410, 100)
+	add_child(current_boss)
+	current_boss.cannon_destroyed.connect(_on_boss_cannon_destroyed)
+	current_boss.shield_collapsed.connect(_on_boss_shield_collapsed)
+	current_boss.boss_defeated.connect(_on_boss_defeated)
+	SoundManager.play_boss_alert()
+	apply_shake(12.0)
 
 func _spawn_boss_homing_missile() -> void:
 	if not is_boss_wave or not is_instance_valid(current_boss) or missile_scene == null:

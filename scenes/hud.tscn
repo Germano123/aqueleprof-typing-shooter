@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
 [ext_resource type="Texture2D" path="res://assets/textures/shield.svg" id="2_shield"]
+[ext_resource type="PackedScene" path="res://scenes/debug_level_selector.tscn" id="3_debug"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top"]
 bg_color = Color(0.02, 0.04, 0.09, 1)
@@ -444,3 +445,6 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "MENU"
+
+[node name="DebugLevelSelector" parent="." instance=ExtResource("3_debug")]
+visible = false

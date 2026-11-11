@@ -5,6 +5,7 @@ extends CanvasLayer
 signal restart_requested
 signal menu_requested
 signal next_wave_requested
+signal debug_wave_selected(wave_number: int, direct_boss: bool)
 
 @onready var score_label: Label = $TopBar/MarginContainer/HBoxContainer/ScoreContainer/ScoreLabel
 @onready var high_score_label: Label = $TopBar/MarginContainer/HBoxContainer/ScoreContainer/HighScoreLabel
@@ -32,10 +33,15 @@ signal next_wave_requested
 @onready var kpi_speed_label: Label = $WaveKPIModal/MarginContainer/VBoxContainer/GridContainer/SpeedCard/Margin/VBox/ValueLabel
 @onready var kpi_next_btn: Button = $WaveKPIModal/MarginContainer/VBoxContainer/NextWaveButton
 
+@onready var debug_level_selector: DebugLevelSelector = $DebugLevelSelector if has_node("DebugLevelSelector") else null
+
 func _ready() -> void:
 	game_over_panel.visible = false
 	kpi_modal.visible = false
 	wave_banner.modulate.a = 0.0
+	
+	if debug_level_selector:
+		debug_level_selector.wave_selected.connect(func(w, d): debug_wave_selected.emit(w, d))
 	
 	restart_btn.pressed.connect(func(): restart_requested.emit())
 	menu_btn.pressed.connect(func(): menu_requested.emit())
@@ -150,3 +156,17 @@ func _on_combo_changed(combo: int, multiplier: float) -> void:
 
 func _on_stats_updated(wpm: float, accuracy: float) -> void:
 	stats_label.text = "%.0f WPM | %.0f%%" % [wpm, accuracy]
+
+func toggle_debug_panel() -> void:
+	if debug_level_selector:
+		if debug_level_selector.is_open():
+			debug_level_selector.close()
+		else:
+			debug_level_selector.open()
+
+func is_debug_panel_open() -> bool:
+	return debug_level_selector != null and debug_level_selector.is_open()
+
+func close_debug_panel() -> void:
+	if debug_level_selector:
+		debug_level_selector.close()
