@@ -6,58 +6,33 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
-## [0.3.1] - 2026-11-11 - Orientação do Míssil, Esquiva com Rolamento Lateral e Isolamento do Chefe
+## [0.1.1] - 2026-11-11 - Primeiro Boss Fight (Encouraçado Ômega) & Esquiva com Shift
 
-### Modificado & Corrigido
-- **🎯 Orientação do Símbolo do Míssil Teleguiado**:
-  - O badge com o símbolo especial (`!@#$%¨&*()`) e a dica (`SHIFT + número`) agora permanece permanentemente na horizontal e orientado para cima (`top_level = true` e `rotation = 0.0`).
-  - Apenas o corpo do míssil (`Sprite2D`) e suas partículas de combustão giram em direção ao jogador, eliminando o problema de caracteres invertidos de cabeça para baixo.
-- **🚀 Manobra Evasiva da Nave com Deslocamento Lateral e Retorno ao Centro**:
-  - Implementado sistema de esquiva em `scripts/player.gd` (`perform_dodge()`): ao interceptar um míssil teleguiado via Shift, a nave realiza um *dash* lateral evasivo para o lado oposto da trajetória da ameaça com rolamento angular da fuselagem (`±20°`) e rastro turbo dos propulsores (`speed_scale = 2.5`).
-  - A nave retorna com amortecimento suave (`Tween.TRANS_CUBIC`) de volta à posição central fixa da arena de combate (`X = 410.0`).
-- **👾 Isolamento Completo da Luta contra o Chefe (Sem Inimigos Menores)**:
-  - Limpeza imediata de quaisquer inimigos menores restantes na tela no instante em que o Encouraçado Ômega desce na arena.
-  - As palavras de alimentação das baterias de artilharia emergem agora diretamente dos canhões/núcleo do chefe com HUD tático dedicado (`🎯 ARTILHARIA ESQ`, `🎯 ARTILHARIA DIR`, `🎯 ALVO NÚCLEO`), sem sprites de pods ou barras de vida de naves alienígenas menores.
-  - Bloqueio completo de spawns periódicos de tropas comuns enquanto o chefe estiver em combate.
-
----
-
-## [0.3.0] - 2026-11-11 - Painel de Seleção de Fases (Debug F1) & Chefe ao Final do Level 3
+Esta versão marca a introdução da primeira grande batalha contra chefes do jogo, novas mecânicas de artilharia e esquiva tática, isolamento de duelo e atalhos de depuração pedagógica.
 
 ### Adicionado
+- **👾 Primeiro Boss Fight: Encouraçado Ômega (Final do Level 3)**:
+  - O confronto contra a nave capital Encouraçado Ômega (`scenes/boss_dreadnought.tscn` e `scripts/boss_dreadnought.gd`) ocorre como clímax ao final do Level 3.
+  - O chefe possui 3 pontos vitais estratégicos:
+    - **Canhão Esquerdo (5 HP)**: Alimentado por palavras de artilharia esquerda (`🎯 ARTILHARIA ESQ`).
+    - **Canhão Direito (5 HP)**: Alimentado por palavras de artilharia direita (`🎯 ARTILHARIA DIR`).
+    - **Núcleo Central (5 HP)**: Blindado por um escudo de força invulnerável que só colapsa quando ambos os canhões laterais são destruídos.
+  - Palavras de artilharia completadas acionam rajadas quádruplas de plasma convergindo no ponto vital correspondente.
+- **🚀 Mísseis Teleguiados & Esquiva Evasiva com SHIFT**:
+  - Míssil Teleguiado `HomingMissile` (`scenes/homing_missile.tscn` e `scripts/homing_missile.gd`) lançado pelo chefe contra o jogador.
+  - Introdução do conceito de esquiva rápida e treino dos dedos mínimos com a tecla `SHIFT` combinada aos algarismos da linha superior (`!`, `@`, `#`, `$`, `%`, `¨`, `&`, `*`, `(`, `)`).
+  - Badge de identificação com símbolo e dica (`SHIFT + número`) permanentemente orientado na horizontal (`top_level = true` e `rotation = 0.0`), garantindo leitura sem caracteres de cabeça para baixo.
+  - Ao interceptar o míssil, a nave executa uma manobra evasiva com *dash* lateral, inclinação da fuselagem (`±20°`), aumento do turbo e retorno suave ao centro ($X = 410\text{px}$).
+- **🛡️ Isolamento do Duelo contra o Chefe (Sem Inimigos Menores)**:
+  - Eliminação de qualquer inimigo menor ao iniciar a batalha contra o chefe; bloqueio do spawner de tropas comuns durante o combate.
+  - Alvos de artilharia emergem diretamente dos canhões/núcleo do chefe com HUD tático limpo, sem sprites de naves menores.
 - **🛠️ Atalho de Modo Debug com Seletor de Fases (`F1`)**:
-  - Modal interativo `DebugLevelSelector` (`scenes/debug_level_selector.tscn` e `scripts/debug_level_selector.gd`) acessível a qualquer momento com a tecla `F1`.
-  - Atalhos destacados para testar o primeiro chefe: `▶ FASE 3 (CHEFE AO FINAL)` e `⚡ FASE 3: CHEFE DIRETO`.
-  - Grade com botões de acesso direto a todas as fases categorizadas por blocos pedagógicos (Fases 1 a 22+).
-  - Campo numérico SpinBox para transição instantânea para qualquer fase customizada.
-  - Pausa inteligente da entrada de digitação do jogo enquanto o modal estiver aberto, fechando com `F1` ou `ESC`.
-- **👾 Primeiro Chefe ao Final do Level 3**:
-  - A Fase 3 foi reestruturada: a primeira metade (20 alvos) trabalha a assimilação dos dedos médios (`D` e `K`) com fixação, e a segunda metade culmina com o alarme de sirene, descida do **Encouraçado Ômega**, mísseis teleguiados e tropas de artilharia.
-  - Reposição automática de alvos de artilharia caso a fila se esgote enquanto o chefe ainda estiver ativo, garantindo fluxo ininterrupto de combate.
-
----
-
-## [0.2.0] - 2026-11-10 - Batalha de Chefe: Encouraçado Ômega & Esquiva com Shift
-
-Nova mecânica tática de combate contra chefes, introduzindo alvos divididos em pontos vitais, ataques de artilharia sincronizados e o primeiro conceito de esquiva/interceptação via tecla Shift.
-
-### Adicionado
-- **👾 Batalha de Chefe (Encouraçado Ômega - Fase 6)**:
-  - Entidade de chefe `BossDreadnought` (`scenes/boss_dreadnought.tscn` e `scripts/boss_dreadnought.gd`) com animações de pulso e 3 pontos vitais estratégicos:
-    - **Canhão Esquerdo**: 5 HP (requer 5 palavras completas de artilharia esquerda).
-    - **Canhão Direito**: 5 HP (requer 5 palavras completas de artilharia direita).
-    - **Núcleo Central**: 5 HP, protegido por um **escudo de força invulnerável** que só colapsa quando ambos os canhões laterais são destruídos.
-- **🎯 Sistema de Disparo de Artilharia Tática**:
-  - Palavras e alvos emergem direcionados para alimentar as baterias laterais (`CANHÃO ESQ`, `CANHÃO DIR`) e central (`NÚCLEO CENTRAL`).
-  - Ao completar a digitação de uma palavra associada, a nave do jogador executa uma rajada quádrupla de projéteis de artilharia convergindo diretamente contra o ponto vital correspondente do chefe.
-- **🚀 Mísseis Teleguiados & Esquiva Tática com SHIFT**:
-  - Míssil Teleguiado `HomingMissile` (`scenes/homing_missile.tscn` e `scripts/homing_missile.gd`) lançado periodicamente pelo chefe em direção à nave do jogador com rastro de partículas e badge pulsante de alerta.
-  - Introdução ao conceito de esquiva rápida e uso dos dedos mínimos com a tecla `SHIFT` combinada aos algarismos da linha superior (`!`, `@`, `#`, `$`, `%`, `¨`, `&`, `*`, `(`, `)`).
-  - Digitar o caractere especial em pleno ar aciona a contramedida imediata da nave, destruindo o míssil com bônus de +250 pontos antes que atinja os escudos do jogador.
+  - Modal interativo `DebugLevelSelector` (`scenes/debug_level_selector.tscn` e `scripts/debug_level_selector.gd`) acessível a qualquer momento com a tecla `F1` (ou `ESC` para fechar).
+  - Atalhos diretos para testar o chefe: `▶ FASE 3 (CHEFE AO FINAL)` e `⚡ FASE 3: CHEFE DIRETO`, além de grade completa de fases (1 a 22+).
 - **🔊 Síntese Sonora Procedural Expandida (`SoundManager`)**:
-  - Novos geradores de áudio em tempo de execução: alerta de sirene de chefe (`play_boss_alert`), bipe de aproximação de míssil teleguiado (`play_missile_warning`), explosão de míssil em pleno ar (`play_missile_destroyed`) e colapso de campo de força (`play_shield_break`).
+  - Alerta de sirene do chefe, bipe de aproximação de míssil teleguiado, explosão de míssil em pleno ar e colapso de campo de força.
 - **🧪 Testes Automatizados**:
-  - Nova suíte `test_boss_fight_mechanics()` em `scripts/test_runner.gd` validando o comportamento de invulnerabilidade do escudo, destruição dos canhões, colapso do campo de força, derrota do chefe, setup e interceptação de mísseis com Shift.
+  - Suíte `test_boss_fight_mechanics()` cobrindo escudo invulnerável, colapso de barreiras, interceptação de mísseis, orientação de badges e manobra de esquiva.
 
 ---
 

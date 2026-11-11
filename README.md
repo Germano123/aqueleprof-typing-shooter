@@ -1,9 +1,9 @@
-# 🚀 Typing Shooter (v0.1.0)
+# 🚀 Typing Shooter (v0.1.1)
 
 Um jogo arcade 2D de combate espacial tático e treinador avançado de digitação às cegas (**Touch Typing**) desenvolvido na **Godot Engine 4.x** para a plataforma educacional **Aquele Professor**.
 
 Repositório Oficial: [Germano123/aqueleprof-typing-shooter](https://github.com/Germano123/aqueleprof-typing-shooter)  
-Versão Atual: **v0.1.0 (Estável para Web & Desktop)**
+Versão Atual: **v0.1.1 (Primeiro Boss Fight & Esquiva com Shift)**
 
 ---
 
