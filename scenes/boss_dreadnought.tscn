@@ -1,0 +1,186 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/boss_dreadnought.gd" id="1_boss"]
+[ext_resource type="Texture2D" path="res://assets/textures/player_ship.svg" id="2_hull"]
+[ext_resource type="Texture2D" path="res://assets/textures/shield.svg" id="3_shield"]
+[ext_resource type="Texture2D" path="res://assets/textures/enemy_pod.svg" id="4_pod"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
+bg_color = Color(0.08, 0.1, 0.15, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.4, 0.6, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_left"]
+bg_color = Color(0.2, 0.8, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_right"]
+bg_color = Color(0.85, 0.4, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_core"]
+bg_color = Color(1, 0.8, 0.2, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="BossDreadnought" type="Node2D"]
+script = ExtResource("1_boss")
+
+[node name="HullVisuals" type="Node2D" parent="."]
+
+[node name="MainHull" type="Sprite2D" parent="HullVisuals"]
+modulate = Color(0.2, 0.25, 0.38, 1)
+position = Vector2(0, -10)
+rotation = 3.14159
+scale = Vector2(3.2, 2.5)
+texture = ExtResource("2_hull")
+
+[node name="WingLeft" type="Sprite2D" parent="HullVisuals"]
+modulate = Color(0.15, 0.2, 0.3, 1)
+position = Vector2(-180, -15)
+rotation = 3.14159
+scale = Vector2(1.8, 1.8)
+texture = ExtResource("4_pod")
+
+[node name="WingRight" type="Sprite2D" parent="HullVisuals"]
+modulate = Color(0.15, 0.2, 0.3, 1)
+position = Vector2(180, -15)
+rotation = 3.14159
+scale = Vector2(1.8, 1.8)
+texture = ExtResource("4_pod")
+
+[node name="LeftCannon" type="Node2D" parent="."]
+position = Vector2(-180, 20)
+
+[node name="CannonSprite" type="Sprite2D" parent="LeftCannon"]
+modulate = Color(0.3, 0.8, 1, 1)
+rotation = 3.14159
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("4_pod")
+
+[node name="HealthBar" type="ProgressBar" parent="LeftCannon"]
+custom_minimum_size = Vector2(80, 8)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 32.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_left")
+max_value = 5.0
+step = 1.0
+value = 5.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="LeftCannon"]
+offset_left = -60.0
+offset_top = 42.0
+offset_right = 60.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "CANHÃO ESQ"
+horizontal_alignment = 1
+
+[node name="RightCannon" type="Node2D" parent="."]
+position = Vector2(180, 20)
+
+[node name="CannonSprite" type="Sprite2D" parent="RightCannon"]
+modulate = Color(0.85, 0.4, 1, 1)
+rotation = 3.14159
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("4_pod")
+
+[node name="HealthBar" type="ProgressBar" parent="RightCannon"]
+custom_minimum_size = Vector2(80, 8)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 32.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_right")
+max_value = 5.0
+step = 1.0
+value = 5.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="RightCannon"]
+offset_left = -60.0
+offset_top = 42.0
+offset_right = 60.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.85, 0.4, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "CANHÃO DIR"
+horizontal_alignment = 1
+
+[node name="Core" type="Node2D" parent="."]
+position = Vector2(0, 10)
+
+[node name="CoreSprite" type="Sprite2D" parent="Core"]
+modulate = Color(1, 0.7, 0.2, 1)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("4_pod")
+
+[node name="ShieldSprite" type="Sprite2D" parent="Core"]
+modulate = Color(0.2, 0.8, 1, 0.8)
+scale = Vector2(2.4, 2.4)
+texture = ExtResource("3_shield")
+
+[node name="HealthBar" type="ProgressBar" parent="Core"]
+custom_minimum_size = Vector2(90, 8)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = 46.0
+offset_right = 45.0
+offset_bottom = 54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_core")
+max_value = 5.0
+step = 1.0
+value = 5.0
+show_percentage = false
+
+[node name="StatusLabel" type="Label" parent="Core"]
+offset_left = -65.0
+offset_top = 56.0
+offset_right = 65.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "ESCUDO ATIVO"
+horizontal_alignment = 1

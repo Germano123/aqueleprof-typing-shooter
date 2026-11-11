@@ -29,6 +29,7 @@ func _init() -> void:
 	test_sound_manager()
 	test_dynamic_difficulty_adjustment()
 	test_game_over_enemy_stop()
+	test_boss_fight_mechanics()
 	print("--- TODOS OS TESTES PASSARAM COM SUCESSO! ---")
 	quit(0)
 
@@ -590,6 +591,91 @@ func test_difficulty_manager_balance(dm) -> void:
 	dm.is_web = false
 	dm.reset_to_defaults()
 	print("  ✓ DifficultyManager validado com sucesso em todos os cenários.")
+
+func test_boss_fight_mechanics() -> void:
+	print("[TEST] Batalha de Chefe: Encouraçado Ômega, 3 Pontos Vitais, Escudo e Esquiva com Shift...")
+	
+	# 1. Testar BossDreadnought: Pontos vitais, escudo e colapso
+	var boss_scene: PackedScene = load("res://scenes/boss_dreadnought.tscn")
+	assert(boss_scene != null, "boss_dreadnought.tscn deve existir")
+	var boss: BossDreadnought = boss_scene.instantiate() as BossDreadnought
+	root.add_child(boss)
+	
+	assert(boss.left_cannon_hp == 5, "Canhão esquerdo deve iniciar com 5 HP")
+	assert(boss.right_cannon_hp == 5, "Canhão direito deve iniciar com 5 HP")
+	assert(boss.core_hp == 5, "Núcleo central deve iniciar com 5 HP")
+	assert(boss.is_shield_active() == true, "Escudo deve estar ativo inicialmente")
+	
+	# Tentativa de causar dano ao núcleo com o escudo ativo (deve falhar)
+	var blocked: bool = boss.damage_vital_point("core")
+	assert(blocked == false, "Dano ao núcleo deve ser bloqueado enquanto o escudo estiver ativo")
+	assert(boss.core_hp == 5, "HP do núcleo deve permanecer inalterado")
+	
+	# Destruir canhão esquerdo (5 acertos)
+	for i in range(5):
+		var hit_l: bool = boss.damage_vital_point("left")
+		assert(hit_l == true, "Acerto no canhão esquerdo deve ser computado")
+	assert(boss.left_cannon_hp == 0, "Canhão esquerdo deve estar em 0 HP")
+	assert(boss.is_left_cannon_alive() == false, "Canhão esquerdo deve constar como destruído")
+	assert(boss.is_shield_active() == true, "Escudo deve continuar ativo pois o canhão direito ainda resiste")
+	
+	# Destruir canhão direito (5 acertos)
+	for i in range(5):
+		var hit_r: bool = boss.damage_vital_point("right")
+		assert(hit_r == true, "Acerto no canhão direito deve ser computado")
+	assert(boss.right_cannon_hp == 0, "Canhão direito deve estar em 0 HP")
+	assert(boss.is_right_cannon_alive() == false, "Canhão direito deve constar como destruído")
+	assert(boss.is_shield_active() == false, "Escudo deve desativar/colapsar após a destruição de ambos os canhões laterais!")
+	
+	# Danificar núcleo vulnerável até a derrota (5 acertos)
+	for i in range(4):
+		var hit_c: bool = boss.damage_vital_point("core")
+		assert(hit_c == true, "Acerto no núcleo desbloqueado deve ser computado")
+	assert(boss.core_hp == 1, "Núcleo deve estar com 1 HP")
+	assert(boss.is_defeated == false, "Chefe ainda não deve estar derrotado com 1 HP")
+	
+	var final_hit: bool = boss.damage_vital_point("core")
+	assert(final_hit == true, "Último acerto no núcleo deve ser computado")
+	assert(boss.core_hp == 0, "Núcleo deve estar com 0 HP")
+	assert(boss.is_defeated == true, "Chefe deve ser declarado derrotado com 0 HP no núcleo!")
+	
+	boss.queue_free()
+	
+	# 2. Testar Míssil Teleguiado e Esquiva com Shift
+	var missile_scene: PackedScene = load("res://scenes/homing_missile.tscn")
+	assert(missile_scene != null, "homing_missile.tscn deve existir")
+	var missile: HomingMissile = missile_scene.instantiate() as HomingMissile
+	root.add_child(missile)
+	
+	missile.setup("!", "1", Vector2(400, 100), null)
+	assert(missile.get_symbol() == "!", "Símbolo do míssil deve ser !")
+	assert(missile.get_hint_text() == "SHIFT + 1", "Dica do míssil deve ser SHIFT + 1")
+	assert(missile.is_intercepted == false, "Míssil deve iniciar não interceptado")
+	
+	missile.intercept()
+	assert(missile.is_intercepted == true, "Míssil deve ser marcado como interceptado")
+	missile.queue_free()
+	
+	# 3. Testar WordManager Fase 6: Atribuição de canhões e núcleo
+	var q6: Array[Dictionary] = WordManager.generate_wave_queue(6)
+	assert(q6.size() == 60, "Fase 6 deve ter 60 alvos de artilharia")
+	var l_cnt: int = 0
+	var r_cnt: int = 0
+	var c_cnt: int = 0
+	for item in q6:
+		var s: String = item.get("cannon_side", "")
+		if s == "left":
+			l_cnt += 1
+		elif s == "right":
+			r_cnt += 1
+		elif s == "core":
+			c_cnt += 1
+	assert(l_cnt == 20, "Fase 6 deve conter 20 alvos associados ao canhão esquerdo (obtido: %d)" % l_cnt)
+	assert(r_cnt == 20, "Fase 6 deve conter 20 alvos associados ao canhão direito (obtido: %d)" % r_cnt)
+	assert(c_cnt == 20, "Fase 6 deve conter 20 alvos associados ao núcleo (obtido: %d)" % c_cnt)
+	
+	print("  ✓ Mecânicas completas de batalha contra chefe validadas com sucesso.")
+
 
 
 

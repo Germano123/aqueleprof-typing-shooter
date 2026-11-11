@@ -6,6 +6,30 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [0.2.0] - 2026-11-10 - Batalha de Chefe: Encouraçado Ômega & Esquiva com Shift
+
+Nova mecânica tática de combate contra chefes, introduzindo alvos divididos em pontos vitais, ataques de artilharia sincronizados e o primeiro conceito de esquiva/interceptação via tecla Shift.
+
+### Adicionado
+- **👾 Batalha de Chefe (Encouraçado Ômega - Fase 6)**:
+  - Entidade de chefe `BossDreadnought` (`scenes/boss_dreadnought.tscn` e `scripts/boss_dreadnought.gd`) com animações de pulso e 3 pontos vitais estratégicos:
+    - **Canhão Esquerdo**: 5 HP (requer 5 palavras completas de artilharia esquerda).
+    - **Canhão Direito**: 5 HP (requer 5 palavras completas de artilharia direita).
+    - **Núcleo Central**: 5 HP, protegido por um **escudo de força invulnerável** que só colapsa quando ambos os canhões laterais são destruídos.
+- **🎯 Sistema de Disparo de Artilharia Tática**:
+  - Palavras e alvos emergem direcionados para alimentar as baterias laterais (`CANHÃO ESQ`, `CANHÃO DIR`) e central (`NÚCLEO CENTRAL`).
+  - Ao completar a digitação de uma palavra associada, a nave do jogador executa uma rajada quádrupla de projéteis de artilharia convergindo diretamente contra o ponto vital correspondente do chefe.
+- **🚀 Mísseis Teleguiados & Esquiva Tática com SHIFT**:
+  - Míssil Teleguiado `HomingMissile` (`scenes/homing_missile.tscn` e `scripts/homing_missile.gd`) lançado periodicamente pelo chefe em direção à nave do jogador com rastro de partículas e badge pulsante de alerta.
+  - Introdução ao conceito de esquiva rápida e uso dos dedos mínimos com a tecla `SHIFT` combinada aos algarismos da linha superior (`!`, `@`, `#`, `$`, `%`, `¨`, `&`, `*`, `(`, `)`).
+  - Digitar o caractere especial em pleno ar aciona a contramedida imediata da nave, destruindo o míssil com bônus de +250 pontos antes que atinja os escudos do jogador.
+- **🔊 Síntese Sonora Procedural Expandida (`SoundManager`)**:
+  - Novos geradores de áudio em tempo de execução: alerta de sirene de chefe (`play_boss_alert`), bipe de aproximação de míssil teleguiado (`play_missile_warning`), explosão de míssil em pleno ar (`play_missile_destroyed`) e colapso de campo de força (`play_shield_break`).
+- **🧪 Testes Automatizados**:
+  - Nova suíte `test_boss_fight_mechanics()` em `scripts/test_runner.gd` validando o comportamento de invulnerabilidade do escudo, destruição dos canhões, colapso do campo de força, derrota do chefe, setup e interceptação de mísseis com Shift.
+
+---
+
 ## [0.1.0] - 2026-11-10 - Versão Estável (Aquele Professor)
 
 Primeiro lançamento estável oficial do **Typing Shooter** preparado para integração e disponibilização no website da marca **Aquele Professor**.

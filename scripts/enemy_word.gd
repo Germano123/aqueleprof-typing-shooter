@@ -15,6 +15,7 @@ var is_targeted: bool = false
 var is_active: bool = true
 var bottom_limit_y: float = 640.0
 var enemy_tint_color: Color = Color.WHITE
+var cannon_side: String = ""
 
 @onready var label: RichTextLabel = $Container/RichTextLabel if has_node("Container/RichTextLabel") else null
 @onready var panel: PanelContainer = $Container/PanelContainer if has_node("Container/PanelContainer") else null
@@ -35,9 +36,10 @@ func _ready() -> void:
 	_update_text_display()
 	_update_health_bar()
 
-func setup(word_str: String, speed: float, spawn_pos: Vector2, target_limit_y: float = 640.0, tag: String = "BASE", tint_col: Color = Color.WHITE, scale_mult: float = 1.0) -> void:
+func setup(word_str: String, speed: float, spawn_pos: Vector2, target_limit_y: float = 640.0, tag: String = "BASE", tint_col: Color = Color.WHITE, scale_mult: float = 1.0, side: String = "") -> void:
 	full_word = word_str.to_upper()
 	category_tag = tag
+	cannon_side = side
 	typed_index = 0
 	fall_speed = speed
 	global_position = spawn_pos

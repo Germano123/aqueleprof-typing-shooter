@@ -11,6 +11,10 @@ var sfx_combo: AudioStreamWAV
 var sfx_player_hit: AudioStreamWAV
 var sfx_game_over: AudioStreamWAV
 var sfx_comms: AudioStreamWAV
+var sfx_boss_alert: AudioStreamWAV
+var sfx_missile_warning: AudioStreamWAV
+var sfx_missile_destroyed: AudioStreamWAV
+var sfx_shield_break: AudioStreamWAV
 
 var audio_players: Array[AudioStreamPlayer] = []
 var num_players: int = 12
@@ -67,6 +71,18 @@ func play_game_over() -> void:
 func play_comms() -> void:
 	_play_stream(sfx_comms, -8.0, randf_range(0.98, 1.02))
 
+func play_boss_alert() -> void:
+	_play_stream(sfx_boss_alert, -3.0, 1.0)
+
+func play_missile_warning() -> void:
+	_play_stream(sfx_missile_warning, -5.0, 1.0)
+
+func play_missile_destroyed() -> void:
+	_play_stream(sfx_missile_destroyed, -4.0, randf_range(0.95, 1.15))
+
+func play_shield_break() -> void:
+	_play_stream(sfx_shield_break, -2.0, 1.0)
+
 # ----------------- GERADORES DE ÁUDIO PROCEDURAL (PCM 16-BIT) -----------------
 
 func _generate_all_sounds() -> void:
@@ -79,6 +95,10 @@ func _generate_all_sounds() -> void:
 	sfx_player_hit = _gen_player_hit()
 	sfx_game_over = _gen_game_over()
 	sfx_comms = _gen_comms()
+	sfx_boss_alert = _gen_boss_alert()
+	sfx_missile_warning = _gen_missile_warning()
+	sfx_missile_destroyed = _gen_missile_destroyed()
+	sfx_shield_break = _gen_shield_break()
 
 func _create_wav(byte_array: PackedByteArray, sample_rate: int = 22050) -> AudioStreamWAV:
 	var wav := AudioStreamWAV.new()
@@ -252,6 +272,79 @@ func _gen_comms() -> AudioStreamWAV:
 		phase += (freq * TAU) / float(sample_rate)
 		var sample: float = sin(phase) * (1.0 - fmod(t * 2.0, 1.0) * 0.5)
 		var s16: int = int(clampf(sample * 24000.0, -32767.0, 32767.0))
+		bytes.encode_s16(i * 2, s16)
+		
+	return _create_wav(bytes, sample_rate)
+
+func _gen_boss_alert() -> AudioStreamWAV:
+	var sample_rate: int = 22050
+	var duration: float = 0.8
+	var total_samples: int = int(sample_rate * duration)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+	
+	var phase: float = 0.0
+	for i in range(total_samples):
+		var t: float = float(i) / float(total_samples)
+		var freq: float = 120.0 + sin(t * 18.0) * 45.0
+		phase += (freq * TAU) / float(sample_rate)
+		var sample: float = sin(phase) * (1.0 - t * 0.3)
+		var s16: int = int(clampf(sample * 29000.0, -32767.0, 32767.0))
+		bytes.encode_s16(i * 2, s16)
+		
+	return _create_wav(bytes, sample_rate)
+
+func _gen_missile_warning() -> AudioStreamWAV:
+	var sample_rate: int = 22050
+	var duration: float = 0.18
+	var total_samples: int = int(sample_rate * duration)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+	
+	var phase: float = 0.0
+	for i in range(total_samples):
+		var t: float = float(i) / float(total_samples)
+		var freq: float = 750.0 + t * 400.0
+		phase += (freq * TAU) / float(sample_rate)
+		var sample: float = (sin(phase) + 0.3 * sin(phase * 2.0)) * (1.0 - t * 0.5)
+		var s16: int = int(clampf(sample * 26000.0, -32767.0, 32767.0))
+		bytes.encode_s16(i * 2, s16)
+		
+	return _create_wav(bytes, sample_rate)
+
+func _gen_missile_destroyed() -> AudioStreamWAV:
+	var sample_rate: int = 22050
+	var duration: float = 0.22
+	var total_samples: int = int(sample_rate * duration)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+	
+	for i in range(total_samples):
+		var t: float = float(i) / float(total_samples)
+		var noise: float = randf() * 2.0 - 1.0
+		var chirp: float = sin(t * 120.0)
+		var sample: float = (noise * 0.7 + chirp * 0.3) * exp(-4.0 * t)
+		var s16: int = int(clampf(sample * 30000.0, -32767.0, 32767.0))
+		bytes.encode_s16(i * 2, s16)
+		
+	return _create_wav(bytes, sample_rate)
+
+func _gen_shield_break() -> AudioStreamWAV:
+	var sample_rate: int = 22050
+	var duration: float = 0.5
+	var total_samples: int = int(sample_rate * duration)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+	
+	var phase: float = 0.0
+	for i in range(total_samples):
+		var t: float = float(i) / float(total_samples)
+		var freq: float = 400.0 * (1.0 - t * 0.6)
+		phase += (freq * TAU) / float(sample_rate)
+		var zap: float = sin(phase) * (1.0 - t)
+		var noise: float = (randf() * 2.0 - 1.0) * exp(-3.0 * t)
+		var sample: float = zap * 0.6 + noise * 0.4
+		var s16: int = int(clampf(sample * 31000.0, -32767.0, 32767.0))
 		bytes.encode_s16(i * 2, s16)
 		
 	return _create_wav(bytes, sample_rate)

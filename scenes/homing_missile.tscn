@@ -1,0 +1,91 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/homing_missile.gd" id="1_missile"]
+[ext_resource type="Texture2D" path="res://assets/textures/laser.svg" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/textures/particle.svg" id="3_part"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+bg_color = Color(0.15, 0.02, 0.03, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.25, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(1, 0.1, 0.2, 0.6)
+shadow_size = 4
+
+[sub_resource type="Gradient" id="Gradient_flame"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(1, 0.9, 0.3, 1, 1, 0.35, 0.1, 0.8, 0.8, 0.1, 0.1, 0)
+
+[node name="HomingMissile" type="Node2D"]
+script = ExtResource("1_missile")
+
+[node name="ThrusterParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, 18)
+amount = 24
+lifetime = 0.35
+texture = ExtResource("3_part")
+emission_shape = 1
+emission_sphere_radius = 4.0
+direction = Vector2(0, 1)
+spread = 15.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 40.0
+initial_velocity_max = 90.0
+scale_amount_min = 0.15
+scale_amount_max = 0.35
+color_ramp = SubResource("Gradient_flame")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(1, 0.2, 0.3, 1)
+scale = Vector2(1.2, 1.4)
+texture = ExtResource("2_body")
+
+[node name="Badge" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(64, 44)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -65.0
+offset_right = 32.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(32, 22)
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
+
+[node name="Margin" type="MarginContainer" parent="Badge"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 2
+
+[node name="VBox" type="VBoxContainer" parent="Badge/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="SymbolLabel" type="Label" parent="Badge/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "!"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="Badge/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 9
+text = "SHIFT + 1"
+horizontal_alignment = 1

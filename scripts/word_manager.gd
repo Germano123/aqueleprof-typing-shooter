@@ -261,12 +261,43 @@ static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 					queue.append(_create_enemy_data("K", "D", "FIXAÇÃO (K)", tint_col, scale_val, -1.0, 1))
 					
 		6:
-			# FASE 6: Desafio Master da Linha de Base (padrão 60 inimigos)
-			var rounds: int = maxi(1, target_count / 10)
-			for round_idx in range(rounds):
-				for pair in PAIRS_HOME_ROW:
-					queue.append(_create_enemy_data(pair["left"], "E", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
-					queue.append(_create_enemy_data(pair["right"], "D", "LINHA DE BASE MASTER", tint_col, scale_val, -1.0, 1))
+			# FASE 6: Batalha de Chefe: Encouraçado Ômega (Artilharia de Canhões & Núcleo)
+			var left_count: int = target_count / 3
+			var right_count: int = target_count / 3
+			var core_count: int = target_count - (left_count + right_count)
+			
+			var keys_l: Array[String] = ["F", "G", "D", "S", "A"]
+			var keys_r: Array[String] = ["J", "H", "K", "L", "Ç"]
+			
+			var temp_left: Array[Dictionary] = []
+			for i in range(left_count):
+				var k: String = keys_l[i % keys_l.size()]
+				temp_left.append(_create_enemy_data(k, "E", "CANHÃO ESQ", Color(0.3, 0.85, 1.0), scale_val, -1.0, 1, "left"))
+				
+			var temp_right: Array[Dictionary] = []
+			for i in range(right_count):
+				var k: String = keys_r[i % keys_r.size()]
+				temp_right.append(_create_enemy_data(k, "D", "CANHÃO DIR", Color(0.9, 0.4, 1.0), scale_val, -1.0, 1, "right"))
+				
+			var temp_core: Array[Dictionary] = []
+			for i in range(core_count):
+				var p: Dictionary = PAIRS_HOME_ROW[i % PAIRS_HOME_ROW.size()]
+				var k: String = p["left"] if i % 2 == 0 else p["right"]
+				var h: String = "E" if i % 2 == 0 else "D"
+				temp_core.append(_create_enemy_data(k, h, "NÚCLEO CENTRAL", Color(1.0, 0.8, 0.2), scale_val, -1.0, 1, "core"))
+				
+			# Alternar entre canhão esquerdo e direito, finalizando com o núcleo
+			var l_i: int = 0
+			var r_i: int = 0
+			while l_i < left_count or r_i < right_count:
+				if l_i < left_count:
+					queue.append(temp_left[l_i])
+					l_i += 1
+				if r_i < right_count:
+					queue.append(temp_right[r_i])
+					r_i += 1
+			for c_item in temp_core:
+				queue.append(c_item)
 					
 		7:
 			# FASE 7: Linha Superior (R - U)
@@ -484,7 +515,7 @@ static func generate_wave_queue(wave: int) -> Array[Dictionary]:
 				
 	return queue
 
-static func _create_enemy_data(word_str: String, hand: String, tag: String, col: Color, sc: float, spd: float = -1.0, sec_id: int = 1) -> Dictionary:
+static func _create_enemy_data(word_str: String, hand: String, tag: String, col: Color, sc: float, spd: float = -1.0, sec_id: int = 1, side: String = "") -> Dictionary:
 	var first_char: String = word_str.substr(0, 1).to_upper()
 	var col_idx: int = get_column_for_key(first_char)
 	var spawn_x: float = get_x_for_column(col_idx)
@@ -498,7 +529,8 @@ static func _create_enemy_data(word_str: String, hand: String, tag: String, col:
 		"spawn_x": spawn_x,
 		"color": col,
 		"scale": sc,
-		"section_id": sec_id
+		"section_id": sec_id,
+		"cannon_side": side
 	}
 	if spd > 0.0:
 		data["speed"] = spd

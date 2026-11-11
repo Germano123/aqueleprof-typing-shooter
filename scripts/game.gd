@@ -6,6 +6,8 @@ extends Node2D
 @export var explosion_scene: PackedScene = preload("res://scenes/explosion.tscn")
 @export var floating_text_scene: PackedScene = preload("res://scenes/floating_text.tscn")
 @export var enemy_scene: PackedScene = preload("res://scenes/enemy_word.tscn")
+@export var boss_scene: PackedScene = preload("res://scenes/boss_dreadnought.tscn")
+@export var missile_scene: PackedScene = preload("res://scenes/homing_missile.tscn")
 
 @onready var player: Node2D = $Player
 @onready var hud: CanvasLayer = $HUD
@@ -31,6 +33,26 @@ var total_wave_enemies: int = 0
 var defeated_wave_enemies: int = 0
 var current_wave_transition_id: int = 0
 var current_section_id: int = 1
+
+# Batalha contra Chefes e Mísseis Teleguiados
+var current_boss: BossDreadnought = null
+var is_boss_wave: bool = false
+var active_missiles: Array[HomingMissile] = []
+var missile_spawn_timer: float = 0.0
+
+const SPECIAL_DODGE_SYMBOLS: String = "!@#$%¨&*()^"
+const MISSILE_SYMBOLS: Array[Dictionary] = [
+	{"sym": "!", "key": "1"},
+	{"sym": "@", "key": "2"},
+	{"sym": "#", "key": "3"},
+	{"sym": "$", "key": "4"},
+	{"sym": "%", "key": "5"},
+	{"sym": "¨", "key": "6"},
+	{"sym": "&", "key": "7"},
+	{"sym": "*", "key": "8"},
+	{"sym": "(", "key": "9"},
+	{"sym": ")", "key": "0"}
+]
 
 const BOTTOM_LIMIT_Y: float = 630.0
 const MIN_ON_SCREEN_ENEMIES: int = 4
@@ -122,6 +144,18 @@ func _start_wave_sequence(wave_num: int) -> void:
 	targeted_enemy = null
 	current_section_id = 1
 	
+	# Limpar mísseis e chefes anteriores
+	for m in active_missiles:
+		if is_instance_valid(m):
+			m.queue_free()
+	active_missiles.clear()
+	missile_spawn_timer = 0.0
+	
+	if is_instance_valid(current_boss):
+		current_boss.queue_free()
+		current_boss = null
+	is_boss_wave = false
+	
 	wave_queue = WordManager.generate_wave_queue(current_wave)
 	total_wave_enemies = wave_queue.size()
 	defeated_wave_enemies = 0
@@ -130,6 +164,17 @@ func _start_wave_sequence(wave_num: int) -> void:
 	player.update_wave_progress(0, total_wave_enemies)
 	typing_panel.update_wave_progress(0, total_wave_enemies, current_wave)
 	typing_metrics.start_wave(current_wave)
+	
+	# Se for Fase 6, inicializar a batalha de chefe
+	if current_wave == 6 and boss_scene:
+		is_boss_wave = true
+		current_boss = boss_scene.instantiate() as BossDreadnought
+		current_boss.position = Vector2(410, 100)
+		add_child(current_boss)
+		current_boss.cannon_destroyed.connect(_on_boss_cannon_destroyed)
+		current_boss.shield_collapsed.connect(_on_boss_shield_collapsed)
+		current_boss.boss_defeated.connect(_on_boss_defeated)
+		SoundManager.play_boss_alert()
 	
 	var tree := get_tree()
 	if tree and tree.root and tree.root.has_node("DifficultyManager"):
@@ -171,7 +216,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 		3: banner_text = "Fase 3: Novos Inimigos: Dedos Médios (D - K)"
 		4: banner_text = "Fase 4: Novos Inimigos: Dedos Anelares (S - L)"
 		5: banner_text = "Fase 5: Novos Inimigos: Dedos Mínimos (A - Ç)"
-		6: banner_text = "Fase 6: Desafio Master da Linha de Base (A S D F G H J K L Ç)"
+		6: banner_text = "Fase 6: Batalha de Chefe - Encouraçado Ômega"
 		7: banner_text = "Fase 7: Linha Superior (R - U)"
 		8: banner_text = "Fase 8: Novos Inimigos: Linha Superior (T - Y)"
 		9: banner_text = "Fase 9: Novos Inimigos: Linha Superior (E - I)"
@@ -204,7 +249,7 @@ func _start_wave_sequence(wave_num: int) -> void:
 		5:
 			typing_panel.set_computer_message("Alvos nos extremos: use os dedos mínimos em A e Ç!", true)
 		6:
-			typing_panel.set_computer_message("Alerta geral! Enxame completo da Linha de Base detectado!", true)
+			typing_panel.set_computer_message("ALERTA DE CHEFE: Encouraçado Ômega! Complete a artilharia para danificar os canhões e use SHIFT+número para esquivar de mísseis!", true)
 		19, 20:
 			typing_panel.set_computer_message("Inimigos blindados na linha de frente! Mantenha ritmo para destruí-los.", true)
 		_:
@@ -224,6 +269,13 @@ func _process(delta: float) -> void:
 			typing_metrics.process_decay(delta)
 		if _get_active_enemy_count() < MIN_ON_SCREEN_ENEMIES and not wave_queue.is_empty():
 			_maintain_enemy_density()
+			
+		# Spawner periódico de mísseis teleguiados na batalha contra o chefe
+		if is_boss_wave and is_instance_valid(current_boss) and missile_scene != null:
+			missile_spawn_timer += delta
+			if missile_spawn_timer >= 8.5 and active_missiles.size() < 2:
+				missile_spawn_timer = 0.0
+				_spawn_boss_homing_missile()
 			
 		computer_tip_timer += delta
 		if computer_tip_timer >= 12.0:
@@ -298,6 +350,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				_handle_typed_character(sanitized_char)
 
 func _sanitize_char(c: String) -> String:
+	if SPECIAL_DODGE_SYMBOLS.contains(c):
+		return c
 	var upper: String = c.to_upper()
 	var map: Dictionary = {
 		"Á": "A", "À": "A", "Ã": "A", "Â": "A", "Ä": "A",
@@ -314,6 +368,24 @@ func _sanitize_char(c: String) -> String:
 	return ""
 
 func _handle_typed_character(char_typed: String) -> void:
+	# Prioridade de interceptação de mísseis teleguiados
+	if active_missiles.size() > 0:
+		var target_missile: HomingMissile = null
+		for m in active_missiles:
+			if is_instance_valid(m) and not m.is_intercepted and m.get_symbol() == char_typed:
+				target_missile = m
+				break
+		if target_missile != null:
+			_intercept_missile(target_missile)
+			return
+
+	if SPECIAL_DODGE_SYMBOLS.contains(char_typed):
+		SoundManager.play_error()
+		ScoreManager.register_wrong_keystroke()
+		typing_panel.on_keystroke_feedback(char_typed, false)
+		typing_panel.add_log("⚠️ NENHUM MÍSSEL COM SÍMBOLO [%s]" % char_typed)
+		return
+
 	if is_instance_valid(targeted_enemy):
 		var expected: String = targeted_enemy.get_next_letter()
 		if char_typed == expected:
@@ -468,7 +540,8 @@ func _spawn_enemy(offset_y: float = 0.0) -> void:
 	
 	var enemy: EnemyWord = enemy_scene.instantiate() as EnemyWord
 	word_container.add_child(enemy)
-	enemy.setup(word_str, speed, Vector2(spawn_x, spawn_y), BOTTOM_LIMIT_Y, word_tag, enemy_color, enemy_scale)
+	var side_str: String = item.get("cannon_side", "")
+	enemy.setup(word_str, speed, Vector2(spawn_x, spawn_y), BOTTOM_LIMIT_Y, word_tag, enemy_color, enemy_scale, side_str)
 	
 	enemy.word_completed.connect(_on_enemy_word_completed)
 	enemy.reached_bottom.connect(_on_enemy_reached_bottom)
@@ -520,6 +593,10 @@ func _on_enemy_word_completed(enemy: EnemyWord) -> void:
 		
 	apply_shake(3.0)
 	
+	# Disparo de artilharia contra ponto vital do chefe se for fase de chefe
+	if is_boss_wave and is_instance_valid(current_boss) and enemy.cannon_side.length() > 0:
+		_fire_artillery_barrage_at_boss(enemy.cannon_side)
+	
 	if targeted_enemy == enemy:
 		targeted_enemy = null
 		player.set_target(null)
@@ -561,6 +638,9 @@ func _on_enemy_reached_bottom(enemy: EnemyWord) -> void:
 
 func _check_wave_completion() -> void:
 	if is_game_over or is_wave_transition:
+		return
+		
+	if is_boss_wave and is_instance_valid(current_boss) and not current_boss.is_defeated:
 		return
 		
 	if wave_queue.is_empty() and _get_active_enemy_count() == 0:
@@ -626,3 +706,135 @@ func _on_player_died() -> void:
 
 func _on_menu_requested() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+# ----------------- BATALHA CONTRA CHEFES E MÍSSEIS TELEGUIADOS -----------------
+
+func _spawn_boss_homing_missile() -> void:
+	if not is_boss_wave or not is_instance_valid(current_boss) or missile_scene == null:
+		return
+	var missile: HomingMissile = missile_scene.instantiate() as HomingMissile
+	if not missile:
+		return
+	var item: Dictionary = MISSILE_SYMBOLS.pick_random()
+	var launch_pos: Vector2 = current_boss.global_position + Vector2(randf_range(-150.0, 150.0), 30.0)
+	add_child(missile)
+	missile.setup(item["sym"], item["key"], launch_pos, player)
+	missile.intercepted.connect(_on_missile_intercepted)
+	missile.impacted.connect(_on_missile_impacted)
+	active_missiles.append(missile)
+	SoundManager.play_missile_warning()
+	typing_panel.set_computer_message("⚠️ MÍSSEL DETECTADO! Pressione SHIFT + %s para contra-atacar!" % item["key"], true)
+	typing_panel.add_log("⚠️ MÍSSEL EM ROTA DE COLISÃO! Símbolo [%s] (SHIFT + %s)" % [item["sym"], item["key"]])
+
+func _intercept_missile(missile: HomingMissile) -> void:
+	if not is_instance_valid(missile):
+		return
+	missile.intercept()
+	ScoreManager.score += 250
+	ScoreManager.register_correct_keystroke()
+	typing_metrics.register_keystroke(missile.get_symbol(), true)
+	typing_panel.on_keystroke_feedback(missile.get_symbol(), true)
+	typing_panel.add_log("⚡ MÍSSEL INTERCEPTADO! (+250 pts)")
+	SoundManager.play_missile_destroyed()
+	
+	player.shoot_visual_feedback()
+	if projectile_scene:
+		var proj = projectile_scene.instantiate()
+		if proj:
+			projectile_container.add_child(proj)
+			proj.setup(player.get_shoot_origin(), missile.global_position, null)
+			
+	if floating_text_scene:
+		var float_node = floating_text_scene.instantiate()
+		float_node.setup("ESQUIVA! +250", missile.global_position, Color(0.3, 1.0, 0.4))
+		effect_container.add_child(float_node)
+
+func _on_missile_intercepted(missile: HomingMissile) -> void:
+	active_missiles.erase(missile)
+
+func _on_missile_impacted(missile: HomingMissile) -> void:
+	active_missiles.erase(missile)
+	player.take_damage(1)
+	apply_shake(16.0)
+	typing_panel.add_log("💥 IMPACTO DE MÍSSEL! (-1 ESCUDO)")
+	typing_panel.set_computer_message("Dano crítico! Míssil atingiu o casco. Mantenha os dedos alertas para esquiva!", true)
+
+func _fire_artillery_barrage_at_boss(side: String) -> void:
+	if not is_instance_valid(current_boss):
+		return
+	var target_pos: Vector2 = current_boss.get_target_global_position(side)
+	var origin_pos: Vector2 = player.get_shoot_origin()
+	
+	# Rajada sequencial de 4 projéteis velozes contra o chefe
+	for i in range(4):
+		var timer := get_tree().create_timer(i * 0.08)
+		timer.timeout.connect(func():
+			if not is_instance_valid(current_boss):
+				return
+			SoundManager.play_laser(1.4)
+			player.shoot_visual_feedback()
+			if projectile_scene:
+				var proj = projectile_scene.instantiate()
+				if proj:
+					projectile_container.add_child(proj)
+					var spread := Vector2(randf_range(-12.0, 12.0), randf_range(-8.0, 8.0))
+					proj.setup(origin_pos, target_pos + spread, null)
+		)
+		
+	# Resolução do impacto da rajada no ponto vital
+	var impact_timer := get_tree().create_timer(0.35)
+	impact_timer.timeout.connect(func():
+		if not is_instance_valid(current_boss):
+			return
+		var damaged: bool = current_boss.damage_vital_point(side, 1)
+		if damaged:
+			apply_shake(6.0)
+			if floating_text_scene:
+				var float_node = floating_text_scene.instantiate()
+				var txt := "ARTILHARIA! -1 HP"
+				float_node.setup(txt, target_pos + Vector2(0, -20), Color(1.0, 0.4, 0.2))
+				effect_container.add_child(float_node)
+			typing_panel.add_log("🎯 IMPACTO DE ARTILHARIA: %s danificado!" % side.to_upper())
+		else:
+			if side == "core" and current_boss.is_shield_active():
+				apply_shake(2.0)
+				if floating_text_scene:
+					var float_node = floating_text_scene.instantiate()
+					float_node.setup("ESCUDO BLOQUEOU!", target_pos + Vector2(0, -20), Color(0.4, 0.8, 1.0))
+					effect_container.add_child(float_node)
+				typing_panel.add_log("🛡️ ESCUDO DO NÚCLEO ABSORVEU O IMPACTO! Destrua os canhões primeiro!")
+	)
+
+func _on_boss_cannon_destroyed(side: String) -> void:
+	if side == "left":
+		typing_panel.add_log("💥 CANHÃO ESQUERDO DO ENCOURAÇADO DESTRUÍDO!")
+		typing_panel.set_computer_message("Canhão esquerdo destruído! Concentre fogo no canhão restante!", true)
+		apply_shake(12.0)
+	elif side == "right":
+		typing_panel.add_log("💥 CANHÃO DIREITO DO ENCOURAÇADO DESTRUÍDO!")
+		typing_panel.set_computer_message("Canhão direito destruído! Concentre fogo no canhão restante!", true)
+		apply_shake(12.0)
+
+func _on_boss_shield_collapsed() -> void:
+	typing_panel.add_log("⚡ ESCUDO DO NÚCLEO EM COLAPSO! NÚCLEO VULNERÁVEL!")
+	typing_panel.set_computer_message("ATENÇÃO: Escudo desativado! Foco total de artilharia no NÚCLEO CENTRAL!", true)
+	apply_shake(18.0)
+
+func _on_boss_defeated() -> void:
+	typing_panel.add_log("🏆 ENCOURAÇADO ÔMEGA DESTRUÍDO COM SUCESSO!")
+	typing_panel.set_computer_message("Incrível! O Encouraçado Ômega foi completamente obliterado!", true)
+	ScoreManager.score += 5000
+	apply_shake(25.0)
+	for m in active_missiles:
+		if is_instance_valid(m):
+			m.queue_free()
+	active_missiles.clear()
+	for child in word_container.get_children():
+		if child is EnemyWord and not child.is_queued_for_deletion():
+			if explosion_scene:
+				var exp_node: Node2D = explosion_scene.instantiate() as Node2D
+				exp_node.global_position = child.global_position
+				effect_container.add_child(exp_node)
+			child.queue_free()
+	wave_queue.clear()
+	_trigger_wave_completed()

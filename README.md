@@ -64,8 +64,8 @@ O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 6
   - Desenvolvimento da independência motora dos dedos anelares.
 - **Fase 5: Novos Dedos Mínimos (`A` - `Ç`)** (40 inimigos: 24 A/Ç + 16 fixação)
   - Domínio das extremidades da linha de base pelos dedos mínimos.
-- **Fase 6: Desafio Master da Linha de Base** (60 inimigos | Ouro Ciano)
-  - Teste integrativo com todos os pares da linha de base misturados em alta velocidade.
+- **Fase 6: Batalha de Chefe - Encouraçado Ômega** (60 inimigos de artilharia | Ouro Ciano)
+  - Primeira batalha épica contra chefes com 3 pontos vitais (Canhões Laterais de 5 HP e Núcleo Central de 5 HP blindado por escudo de força) e introdução à esquiva de mísseis teleguiados via `SHIFT + número`.
 
 ### ⬆️ Bloco 2: Linha Superior (Top Row - Fases 7 a 12)
 - **Fase 7: Indicadores Superior (`R` - `U`)** (40 inimigos | Verde Esmeralda)
@@ -92,6 +92,28 @@ O jogo estrutura a curva de aprendizado em **fases modulares e focadas** (40 a 6
   - Termos complexos com saltos pelo teclado (`PIXEL`, `EQUIPE`, `ZUMBIDO`, `PROJETO`, `COMPLEXO`).
 - **Fase 22+: Horda Cósmica Mista Procedural** (Dourado Infinito):
   - Spawns combinados de todas as categorias anteriores com dificuldade incremental contínua.
+
+---
+
+## 👾 Sistema de Combate contra Chefes & Esquiva Tática
+
+A partir da **Fase 6**, o jogo introduz confrontos épicos contra naves capitais com mecânicas táticas avançadas:
+
+### 🛡️ O Encouraçado Ômega (3 Pontos Vitais)
+1. **Canhão Esquerdo (5 HP)**: Localizado na bateria bombordo, vulnerável a palavras completadas na artilharia esquerda (`CANHÃO ESQ`).
+2. **Canhão Direito (5 HP)**: Localizado na bateria estibordo, vulnerável a palavras completadas na artilharia direita (`CANHÃO DIR`).
+3. **Núcleo Central (5 HP)**: Blindado por um **escudo de força invulnerável**. Disparos contra o núcleo são repelidos enquanto o escudo persistir.
+4. **Colapso de Escudo**: Apenas quando **ambos os canhões laterais são destruídos**, o escudo de força colapsa com efeito audiovisual dramático, expondo o núcleo à artilharia final (`NÚCLEO CENTRAL`).
+
+### 🎯 Rajadas de Artilharia Tática
+- Tropas inimigas de artilharia descem na tela sinalizando qual bateria alimentam.
+- Ao concluir a digitação correta de cada palavra de artilharia, a nave do jogador executa uma rajada quádrupla de tiros de plasma de alta velocidade convergindo no ponto vital do chefe, subtraindo 1 ponto de vida e gerando feedback tátil de impacto na tela.
+
+### 🚀 Mísseis Teleguiados & Conceito de Esquiva com SHIFT
+- Durante a batalha, o chefe lança periodicamente **mísseis teleguiados acelerados** em direção à nave do jogador.
+- Cada míssil projeta um badge de alerta com um caractere especial obtido pela fileira numérica superior combinada à tecla `Shift`:
+  `!` (`SHIFT + 1`), `@` (`SHIFT + 2`), `#` (`SHIFT + 3`), `$` (`SHIFT + 4`), `%` (`SHIFT + 5`), `¨` (`SHIFT + 6`), `&` (`SHIFT + 7`), `*` (`SHIFT + 8`), `(` (`SHIFT + 9`), `)` (`SHIFT + 0`).
+- Ao pressionar `Shift` e teclar o símbolo correspondente, a nave dispara imediatamente uma contramedida interceptadora que explode o míssil em pleno ar, concedendo **+250 pontos de esquiva** e protegendo os escudos da nave.
 
 ---
 
