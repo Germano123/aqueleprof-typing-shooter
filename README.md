@@ -111,9 +111,10 @@ O primeiro grande confronto ocorre **ao final da Fase 3** contra a nave capital 
 
 ### 🚀 Mísseis Teleguiados & Conceito de Esquiva com SHIFT
 - Durante a batalha, o chefe lança periodicamente **mísseis teleguiados acelerados** em direção à nave do jogador.
-- Cada míssil projeta um badge de alerta com um caractere especial obtido pela fileira numérica superior combinada à tecla `Shift`:
+- Cada míssil projeta um badge de alerta sempre na horizontal e legível (sem inversão visual) com um caractere especial obtido pela fileira numérica superior combinada à tecla `Shift`:
   `!` (`SHIFT + 1`), `@` (`SHIFT + 2`), `#` (`SHIFT + 3`), `$` (`SHIFT + 4`), `%` (`SHIFT + 5`), `¨` (`SHIFT + 6`), `&` (`SHIFT + 7`), `*` (`SHIFT + 8`), `(` (`SHIFT + 9`), `)` (`SHIFT + 0`).
-- Ao pressionar `Shift` e teclar o símbolo correspondente, a nave dispara imediatamente uma contramedida interceptadora que explode o míssil em pleno ar, concedendo **+250 pontos de esquiva** e protegendo os escudos da nave.
+- Ao pressionar `Shift` e teclar o símbolo correspondente, a nave realiza uma **manobra de esquiva lateral com rolamento angular da fuselagem**, retornando suavemente ao eixo central e detonando o míssil em pleno ar, concedendo **+250 pontos de esquiva** e protegendo os escudos da nave.
+- **Isolamento de Duelo sem Inimigos Menores**: Durante a batalha contra o Encouraçado Ômega, todas as tropas menores comuns são removidas da tela. O jogador concentra-se exclusivamente nos disparos de artilharia disparados pelo próprio chefe e na interceptação/esquiva de mísseis.
 
 ---
 

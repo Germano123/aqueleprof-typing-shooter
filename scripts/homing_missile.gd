@@ -22,7 +22,23 @@ var is_intercepted: bool = false
 @onready var badge: PanelContainer = $Badge if has_node("Badge") else null
 @onready var thrusters: CPUParticles2D = $ThrusterParticles if has_node("ThrusterParticles") else null
 
+func _ensure_nodes() -> void:
+	if badge == null and has_node("Badge"):
+		badge = $Badge
+	if sprite == null and has_node("Sprite"):
+		sprite = $Sprite
+	if symbol_label == null and has_node("Badge/Margin/VBox/SymbolLabel"):
+		symbol_label = $Badge/Margin/VBox/SymbolLabel
+	if hint_label == null and has_node("Badge/Margin/VBox/HintLabel"):
+		hint_label = $Badge/Margin/VBox/HintLabel
+	if thrusters == null and has_node("ThrusterParticles"):
+		thrusters = $ThrusterParticles
+
 func _ready() -> void:
+	_ensure_nodes()
+	if badge:
+		badge.top_level = true
+		badge.rotation = 0.0
 	_update_display()
 	_play_sfx("warning")
 	
@@ -33,6 +49,10 @@ func _ready() -> void:
 		tween.tween_property(badge, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_SINE)
 
 func setup(sym: String, hint: String, origin_pos: Vector2, target_node_or_pos = null, base_spd: float = 85.0) -> void:
+	_ensure_nodes()
+	if badge:
+		badge.top_level = true
+		badge.rotation = 0.0
 	global_position = origin_pos
 	if target_node_or_pos is Node2D:
 		target_pos = (target_node_or_pos as Node2D).global_position
@@ -45,11 +65,12 @@ func setup(sym: String, hint: String, origin_pos: Vector2, target_node_or_pos = 
 	speed = base_spd
 	is_active = true
 	is_intercepted = false
+	rotation = 0.0
 	_update_display()
-	look_at(target_pos)
-	rotation += PI / 2.0
+	_update_visual_orientation()
 
 func _update_display() -> void:
+	_ensure_nodes()
 	if symbol_label:
 		symbol_label.text = symbol
 	if hint_label:
@@ -57,6 +78,19 @@ func _update_display() -> void:
 			hint_label.text = "SHIFT + %s" % hint_key
 		else:
 			hint_label.text = "SHIFT"
+
+func _update_visual_orientation() -> void:
+	_ensure_nodes()
+	var dir := (target_pos - global_position).normalized()
+	var angle := dir.angle() + PI / 2.0
+	if sprite:
+		sprite.rotation = angle
+	if thrusters:
+		thrusters.rotation = angle
+	if badge:
+		# O badge de identificação NUNCA gira: fica 100% horizontal e legível, sem inverter a letra
+		badge.rotation = 0.0
+		badge.global_position = global_position + Vector2(-32.0, -52.0)
 
 func _process(delta: float) -> void:
 	if not is_active:
@@ -66,9 +100,7 @@ func _process(delta: float) -> void:
 	var dir := (target_pos - global_position).normalized()
 	global_position += dir * speed * delta
 	
-	# Suave rotação na direção da nave
-	var target_rot: float = dir.angle() + PI / 2.0
-	rotation = lerp_angle(rotation, target_rot, 8.0 * delta)
+	_update_visual_orientation()
 	
 	# Verificar se atingiu a linha defensiva da nave
 	if global_position.y >= 635.0 or global_position.distance_to(target_pos) < 30.0:
@@ -79,6 +111,8 @@ func intercept() -> void:
 		return
 	is_active = false
 	is_intercepted = true
+	if badge:
+		badge.visible = false
 	_play_sfx("destroyed")
 	intercepted.emit(self)
 	queue_free()
@@ -96,6 +130,8 @@ func _on_impact() -> void:
 	if not is_active:
 		return
 	is_active = false
+	if badge:
+		badge.visible = false
 	impacted.emit(self)
 	queue_free()
 

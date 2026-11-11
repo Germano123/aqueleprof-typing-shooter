@@ -554,23 +554,34 @@ func _spawn_enemy(offset_y: float = 0.0) -> void:
 		
 	var word_str: String = item["word"]
 	var word_tag: String = item["tag"]
+	var side_str: String = item.get("cannon_side", "")
 	var spawn_x: float = item["spawn_x"]
 	var enemy_color: Color = item.get("color", Color.WHITE)
 	var enemy_scale: float = item.get("scale", 1.0)
 	
-	# Descida estrita em 10 colunas fixas associadas aos dedos das mãos
-	# Evitar sobreposição vertical se houver inimigo descendo na mesmíssima coluna
 	var spawn_y: float = -55.0 + offset_y
-	for child in word_container.get_children():
-		if child is EnemyWord and not child.is_queued_for_deletion():
-			if absf(child.global_position.x - spawn_x) < 25.0 and child.global_position.y < 50.0:
-				spawn_y = minf(spawn_y, child.global_position.y - 75.0)
+	if is_boss_wave and is_instance_valid(current_boss) and side_str.length() > 0:
+		# Alvos de artilharia tática emergem diretamente dos canhões laterais e núcleo do chefe
+		match side_str.to_lower():
+			"left":
+				spawn_x = 230.0
+			"right":
+				spawn_x = 590.0
+			"core":
+				spawn_x = 410.0
+		spawn_y = 125.0 + offset_y
+	else:
+		# Descida estrita em 10 colunas fixas associadas aos dedos das mãos
+		# Evitar sobreposição vertical se houver inimigo descendo na mesmíssima coluna
+		for child in word_container.get_children():
+			if child is EnemyWord and not child.is_queued_for_deletion():
+				if absf(child.global_position.x - spawn_x) < 25.0 and child.global_position.y < 50.0:
+					spawn_y = minf(spawn_y, child.global_position.y - 75.0)
 	var base_spd: float = item.get("speed", base_fall_speed)
 	var speed: float = base_spd + randf_range(-0.8, 0.8)
 	
 	var enemy: EnemyWord = enemy_scene.instantiate() as EnemyWord
 	word_container.add_child(enemy)
-	var side_str: String = item.get("cannon_side", "")
 	enemy.setup(word_str, speed, Vector2(spawn_x, spawn_y), BOTTOM_LIMIT_Y, word_tag, enemy_color, enemy_scale, side_str)
 	
 	enemy.word_completed.connect(_on_enemy_word_completed)
@@ -602,6 +613,14 @@ func _get_active_enemy_count() -> int:
 func _maintain_enemy_density() -> void:
 	if is_game_over or is_wave_transition:
 		return
+	if is_boss_wave:
+		# Durante o combate contra o chefe, NENHUM inimigo menor deve aparecer.
+		# Apenas alvos de artilharia tática (no máximo 2 simultâneos: 1 esquerdo, 1 direito; ou 1 núcleo)
+		var max_boss_targets: int = 1 if (is_instance_valid(current_boss) and not current_boss.is_shield_active()) else 2
+		while _get_active_enemy_count() < max_boss_targets and not wave_queue.is_empty():
+			_spawn_enemy(0.0)
+		return
+		
 	var stagger_step: float = 0.0
 	while _get_active_enemy_count() < MIN_ON_SCREEN_ENEMIES and not wave_queue.is_empty():
 		_spawn_enemy(stagger_step)
@@ -647,6 +666,17 @@ func _on_enemy_word_completed(enemy: EnemyWord) -> void:
 	_check_wave_completion()
 
 func _on_enemy_reached_bottom(enemy: EnemyWord) -> void:
+	if is_boss_wave and enemy.cannon_side.length() > 0:
+		# Durante a luta de chefe, soluções de artilharia não causam dano ao jogador ao passar
+		typing_panel.add_log("⚠️ SOLUÇÃO DE TIRO REINICIADA: Recalibrando artilharia...")
+		if targeted_enemy == enemy:
+			targeted_enemy = null
+			player.set_target(null)
+			_update_target_panel()
+		enemy.queue_free()
+		_maintain_enemy_density()
+		return
+		
 	wave_enemies_remaining = maxi(0, wave_enemies_remaining - 1)
 	defeated_wave_enemies += 1
 	player.update_wave_progress(defeated_wave_enemies, total_wave_enemies)
@@ -709,6 +739,11 @@ func _on_next_wave_requested() -> void:
 
 func _on_spawn_timer_timeout() -> void:
 	if not is_game_over and not is_wave_transition:
+		if is_boss_wave:
+			# Durante a luta contra o chefe, não spawnar hordas comuns de tropas
+			_maintain_enemy_density()
+			return
+			
 		# Capacidade base de acordo com a fase
 		var base_cap: int = 8 if current_wave >= 6 else (6 if current_wave == 5 else MAX_ON_SCREEN_ENEMIES)
 		# Teto dinâmico que se expande com o ritmo do jogador
@@ -750,6 +785,35 @@ func _spawn_boss() -> void:
 	if not boss_scene or is_instance_valid(current_boss):
 		return
 	is_boss_wave = true
+	
+	# Destruir imediatamente quaisquer inimigos menores ativos na arena
+	for child in word_container.get_children():
+		if child is EnemyWord and not child.is_queued_for_deletion():
+			if explosion_scene:
+				var exp_node: Node2D = explosion_scene.instantiate() as Node2D
+				exp_node.global_position = child.global_position
+				effect_container.add_child(exp_node)
+			child.queue_free()
+	targeted_enemy = null
+	player.set_target(null)
+	_update_target_panel()
+	
+	# Eliminar tropas menores restantes na fila: a batalha contra o chefe deve conter APENAS o chefe e seus alvos
+	var boss_artillery_queue: Array[Dictionary] = []
+	for it in wave_queue:
+		if it.get("cannon_side", "").length() > 0:
+			boss_artillery_queue.append(it)
+	wave_queue = boss_artillery_queue
+	
+	if wave_queue.is_empty():
+		wave_queue = WordManager.generate_wave_queue(current_wave, true)
+		
+	total_wave_enemies = wave_queue.size()
+	defeated_wave_enemies = 0
+	wave_enemies_remaining = total_wave_enemies
+	player.update_wave_progress(0, total_wave_enemies)
+	typing_panel.update_wave_progress(0, total_wave_enemies, current_wave)
+	
 	current_boss = boss_scene.instantiate() as BossDreadnought
 	current_boss.position = Vector2(410, 100)
 	add_child(current_boss)
@@ -758,6 +822,9 @@ func _spawn_boss() -> void:
 	current_boss.boss_defeated.connect(_on_boss_defeated)
 	SoundManager.play_boss_alert()
 	apply_shake(12.0)
+	
+	# Inicializa os alvos de artilharia tática do chefe
+	_maintain_enemy_density()
 
 func _spawn_boss_homing_missile() -> void:
 	if not is_boss_wave or not is_instance_valid(current_boss) or missile_scene == null:
@@ -779,6 +846,7 @@ func _spawn_boss_homing_missile() -> void:
 func _intercept_missile(missile: HomingMissile) -> void:
 	if not is_instance_valid(missile):
 		return
+	var missile_pos: Vector2 = missile.global_position
 	missile.intercept()
 	ScoreManager.score += 250
 	ScoreManager.register_correct_keystroke()
@@ -787,6 +855,8 @@ func _intercept_missile(missile: HomingMissile) -> void:
 	typing_panel.add_log("⚡ MÍSSEL INTERCEPTADO! (+250 pts)")
 	SoundManager.play_missile_destroyed()
 	
+	# Manobra de esquiva lateral da nave e retorno suave ao centro da arena
+	player.perform_dodge(missile_pos.x)
 	player.shoot_visual_feedback()
 	if projectile_scene:
 		var proj = projectile_scene.instantiate()

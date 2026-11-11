@@ -27,7 +27,24 @@ var cannon_side: String = ""
 
 var initial_scale: Vector2 = Vector2.ONE
 
+func _ensure_nodes() -> void:
+	if label == null and has_node("Container/RichTextLabel"):
+		label = $Container/RichTextLabel
+	if panel == null and has_node("Container/PanelContainer"):
+		panel = $Container/PanelContainer
+	if reticle == null and has_node("Reticle"):
+		reticle = $Reticle
+	if pod_sprite == null and has_node("PodSprite"):
+		pod_sprite = $PodSprite
+	if container == null and has_node("Container"):
+		container = $Container
+	if health_bar == null and has_node("Container/HealthBar"):
+		health_bar = $Container/HealthBar
+	if tag_label == null and has_node("Container/TagLabel"):
+		tag_label = $Container/TagLabel
+
 func _ready() -> void:
+	_ensure_nodes()
 	if container:
 		initial_scale = container.scale
 	if reticle:
@@ -37,6 +54,7 @@ func _ready() -> void:
 	_update_health_bar()
 
 func setup(word_str: String, speed: float, spawn_pos: Vector2, target_limit_y: float = 640.0, tag: String = "BASE", tint_col: Color = Color.WHITE, scale_mult: float = 1.0, side: String = "") -> void:
+	_ensure_nodes()
 	full_word = word_str.to_upper()
 	category_tag = tag
 	cannon_side = side
@@ -49,18 +67,37 @@ func setup(word_str: String, speed: float, spawn_pos: Vector2, target_limit_y: f
 	if scale_mult != 1.0:
 		scale = Vector2(scale_mult, scale_mult)
 		
-	if is_node_ready():
-		_apply_visual_styling()
-		_update_text_display()
-		_update_health_bar()
-		if tag_label:
-			tag_label.text = category_tag
+	_apply_visual_styling()
+	_update_text_display()
+	_update_health_bar()
+	if tag_label:
+		tag_label.text = category_tag
 
 func _apply_visual_styling() -> void:
-	if pod_sprite and enemy_tint_color != Color.WHITE:
-		pod_sprite.modulate = enemy_tint_color
-	if tag_label and enemy_tint_color != Color.WHITE:
-		tag_label.add_theme_color_override("font_color", enemy_tint_color.lightened(0.2))
+	if cannon_side.length() > 0:
+		# Alvos de artilharia do Chefe: Ocultar nave alienígena para não ser um inimigo menor
+		if pod_sprite:
+			pod_sprite.visible = false
+		if health_bar:
+			health_bar.visible = false
+		if tag_label:
+			match cannon_side:
+				"left":
+					tag_label.text = "🎯 ARTILHARIA ESQ"
+					tag_label.add_theme_color_override("font_color", Color(0.3, 0.85, 1.0))
+				"right":
+					tag_label.text = "🎯 ARTILHARIA DIR"
+					tag_label.add_theme_color_override("font_color", Color(0.9, 0.4, 1.0))
+				"core":
+					tag_label.text = "🎯 ALVO NÚCLEO"
+					tag_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
+	else:
+		if pod_sprite:
+			pod_sprite.visible = true
+			if enemy_tint_color != Color.WHITE:
+				pod_sprite.modulate = enemy_tint_color
+		if tag_label and enemy_tint_color != Color.WHITE:
+			tag_label.add_theme_color_override("font_color", enemy_tint_color.lightened(0.2))
 
 func set_targeted(targeted: bool) -> void:
 	is_targeted = targeted

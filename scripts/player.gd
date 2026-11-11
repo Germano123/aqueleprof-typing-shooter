@@ -10,10 +10,10 @@ var health: int = 3
 var default_aim_dir: Vector2 = Vector2.UP
 var current_target: Node2D = null
 
-@onready var sprite: Sprite2D = $Sprite2D
-@onready var left_cannon: Marker2D = $LeftCannon
-@onready var right_cannon: Marker2D = $RightCannon
-@onready var thrusters: CPUParticles2D = $Thrusters
+@onready var sprite: Sprite2D = $Sprite2D if has_node("Sprite2D") else null
+@onready var left_cannon: Marker2D = $LeftCannon if has_node("LeftCannon") else null
+@onready var right_cannon: Marker2D = $RightCannon if has_node("RightCannon") else null
+@onready var thrusters: CPUParticles2D = $Thrusters if has_node("Thrusters") else null
 @onready var overdrive_particles: CPUParticles2D = $OverdriveParticles if has_node("OverdriveParticles") else null
 
 # Componentes da Barra de Rank de Estilo e Progresso da Onda
@@ -25,8 +25,21 @@ var current_target: Node2D = null
 var use_left_cannon: bool = true
 var base_position: Vector2 = Vector2.ZERO
 var current_rank: String = "C"
+var is_dodging: bool = false
+var dodge_tween: Tween = null
+
+func _ensure_nodes() -> void:
+	if sprite == null and has_node("Sprite2D"):
+		sprite = $Sprite2D
+	if left_cannon == null and has_node("LeftCannon"):
+		left_cannon = $LeftCannon
+	if right_cannon == null and has_node("RightCannon"):
+		right_cannon = $RightCannon
+	if thrusters == null and has_node("Thrusters"):
+		thrusters = $Thrusters
 
 func _ready() -> void:
+	_ensure_nodes()
 	health = max_health
 	base_position = position
 	health_changed.emit(health, max_health)
@@ -34,10 +47,18 @@ func _ready() -> void:
 	update_wave_progress(0, 100)
 
 func reset() -> void:
+	if dodge_tween and dodge_tween.is_valid():
+		dodge_tween.kill()
+	is_dodging = false
 	health = max_health
 	current_target = null
 	position = base_position
 	rotation = 0.0
+	if sprite:
+		sprite.rotation = 0.0
+		sprite.position = Vector2.ZERO
+	if thrusters:
+		thrusters.speed_scale = 1.0
 	modulate = Color.WHITE
 	health_changed.emit(health, max_health)
 	update_style_rank("C", Color(0.4, 0.6, 1.0), 50.0)
@@ -90,6 +111,53 @@ func shoot_visual_feedback() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "position", recoil_offset, 0.04)
 	tween.tween_property(sprite, "position", Vector2.ZERO, 0.06)
+
+func perform_dodge(threat_x: float = -1.0) -> void:
+	_ensure_nodes()
+	if dodge_tween and dodge_tween.is_valid():
+		dodge_tween.kill()
+		
+	is_dodging = true
+	var dodge_distance: float = 125.0
+	var dodge_dir: float = -1.0
+	
+	if threat_x >= 0.0:
+		# Se a ameaça estiver vindo da direita (>= base X), esquivar para a esquerda
+		# Se vier da esquerda (< base X), esquivar para a direita
+		dodge_dir = -1.0 if threat_x >= base_position.x else 1.0
+	else:
+		dodge_dir = -1.0 if randf() < 0.5 else 1.0
+		
+	var target_dodge_x: float = clampf(base_position.x + (dodge_dir * dodge_distance), 160.0, 660.0)
+	var bank_angle: float = deg_to_rad(20.0 * dodge_dir)
+	
+	dodge_tween = create_tween()
+	
+	# 1. Rápido deslocamento lateral com rolamento/inclinação da nave (0.12s)
+	dodge_tween.set_parallel(true)
+	dodge_tween.tween_property(self, "position:x", target_dodge_x, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if sprite:
+		dodge_tween.tween_property(sprite, "rotation", bank_angle, 0.12)
+	if thrusters:
+		thrusters.speed_scale = 2.5
+		
+	# 2. Ponto de transição na lateral (0.06s)
+	dodge_tween.chain().tween_interval(0.06)
+	
+	# 3. Retorno suave e veloz ao centro da arena (base_position.x)
+	dodge_tween.chain().set_parallel(true)
+	dodge_tween.tween_property(self, "position:x", base_position.x, 0.22).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	if sprite:
+		dodge_tween.tween_property(sprite, "rotation", 0.0, 0.22)
+	
+	dodge_tween.chain().tween_callback(func():
+		is_dodging = false
+		position.x = base_position.x
+		if sprite:
+			sprite.rotation = 0.0
+		if thrusters:
+			thrusters.speed_scale = 1.0
+	)
 
 func take_damage(amount: int = 1) -> void:
 	health = maxi(0, health - amount)

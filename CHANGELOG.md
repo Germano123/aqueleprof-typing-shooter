@@ -6,6 +6,22 @@ O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 
 ---
 
+## [0.3.1] - 2026-11-11 - Orientação do Míssil, Esquiva com Rolamento Lateral e Isolamento do Chefe
+
+### Modificado & Corrigido
+- **🎯 Orientação do Símbolo do Míssil Teleguiado**:
+  - O badge com o símbolo especial (`!@#$%¨&*()`) e a dica (`SHIFT + número`) agora permanece permanentemente na horizontal e orientado para cima (`top_level = true` e `rotation = 0.0`).
+  - Apenas o corpo do míssil (`Sprite2D`) e suas partículas de combustão giram em direção ao jogador, eliminando o problema de caracteres invertidos de cabeça para baixo.
+- **🚀 Manobra Evasiva da Nave com Deslocamento Lateral e Retorno ao Centro**:
+  - Implementado sistema de esquiva em `scripts/player.gd` (`perform_dodge()`): ao interceptar um míssil teleguiado via Shift, a nave realiza um *dash* lateral evasivo para o lado oposto da trajetória da ameaça com rolamento angular da fuselagem (`±20°`) e rastro turbo dos propulsores (`speed_scale = 2.5`).
+  - A nave retorna com amortecimento suave (`Tween.TRANS_CUBIC`) de volta à posição central fixa da arena de combate (`X = 410.0`).
+- **👾 Isolamento Completo da Luta contra o Chefe (Sem Inimigos Menores)**:
+  - Limpeza imediata de quaisquer inimigos menores restantes na tela no instante em que o Encouraçado Ômega desce na arena.
+  - As palavras de alimentação das baterias de artilharia emergem agora diretamente dos canhões/núcleo do chefe com HUD tático dedicado (`🎯 ARTILHARIA ESQ`, `🎯 ARTILHARIA DIR`, `🎯 ALVO NÚCLEO`), sem sprites de pods ou barras de vida de naves alienígenas menores.
+  - Bloqueio completo de spawns periódicos de tropas comuns enquanto o chefe estiver em combate.
+
+---
+
 ## [0.3.0] - 2026-11-11 - Painel de Seleção de Fases (Debug F1) & Chefe ao Final do Level 3
 
 ### Adicionado

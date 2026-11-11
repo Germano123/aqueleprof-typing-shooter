@@ -647,14 +647,35 @@ func test_boss_fight_mechanics() -> void:
 	var missile: HomingMissile = missile_scene.instantiate() as HomingMissile
 	root.add_child(missile)
 	
-	missile.setup("!", "1", Vector2(400, 100), null)
+	missile.setup("!", "1", Vector2(400, 100), Vector2(400, 650))
 	assert(missile.get_symbol() == "!", "Símbolo do míssil deve ser !")
 	assert(missile.get_hint_text() == "SHIFT + 1", "Dica do míssil deve ser SHIFT + 1")
 	assert(missile.is_intercepted == false, "Míssil deve iniciar não interceptado")
+	assert(missile.badge != null, "Badge do míssil deve existir")
+	assert(missile.badge.rotation == 0.0, "Badge do míssil deve ter rotação 0 (nunca de cabeça para baixo)")
 	
 	missile.intercept()
 	assert(missile.is_intercepted == true, "Míssil deve ser marcado como interceptado")
 	missile.queue_free()
+	
+	# Testar Esquiva da Nave (movimento lateral e retorno ao centro)
+	var player_scene: PackedScene = load("res://scenes/player.tscn")
+	assert(player_scene != null, "player.tscn deve existir")
+	var player_test: Node2D = player_scene.instantiate()
+	root.add_child(player_test)
+	player_test.position = Vector2(410, 650)
+	player_test.base_position = Vector2(410, 650)
+	player_test.perform_dodge(550.0) # Ameaça vindo da direita
+	assert(player_test.is_dodging == true, "Nave deve entrar em manobra de esquiva lateral")
+	player_test.queue_free()
+	
+	# Testar que alvos de artilharia do Chefe não exibem nave de inimigo menor
+	var enemy_scene: PackedScene = load("res://scenes/enemy_word.tscn")
+	var enemy_art: EnemyWord = enemy_scene.instantiate() as EnemyWord
+	root.add_child(enemy_art)
+	enemy_art.setup("TESTE", 50.0, Vector2(200, 100), 600.0, "ARTILHARIA", Color.WHITE, 1.0, "left")
+	assert(enemy_art.pod_sprite.visible == false, "Alvos de artilharia do chefe não devem exibir pod de inimigo menor")
+	enemy_art.queue_free()
 	
 	# 3. Testar WordManager Fase 6: Atribuição de canhões e núcleo
 	var q6: Array[Dictionary] = WordManager.generate_wave_queue(6)
